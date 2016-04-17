@@ -9,7 +9,15 @@ use dom::bindings::js::{JS, Root};
 use dom::bindings::reflector::{Reflector, reflect_dom_object};
 use dom::element::Element;
 use dom::window::Window;
-
+use dom::node::Node;
+use dom::htmlelement::HTMLElement;
+use dom::htmlinputelement::HTMLInputElement;
+use dom::htmlselectelement::HTMLSelectElement;
+use dom::htmlbuttonelement::HTMLButtonElement;
+use dom::htmlobjectelement::HTMLObjectElement;
+use dom::htmltextareaelement::HTMLTextAreaElement;
+use dom::validation::Validatable;
+use dom::bindings::inheritance::{Castable, ElementTypeId, HTMLElementTypeId, NodeTypeId};
 // https://html.spec.whatwg.org/multipage/#validity-states
 #[derive_JSTraceable]
 #[derive_HeapSizeOf]
@@ -106,6 +114,48 @@ impl ValidityStateMethods for ValidityState {
 
     // https://html.spec.whatwg.org/multipage/#dom-validitystate-valid
     fn Valid(&self) -> bool {
+        
+        let element = match self.element.upcast::<Node>().type_id() {
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLInputElement)) => {
+                //let element = self.element.downcast::<HTMLInputElement>().unwrap();
+                println!("1");
+               
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLButtonElement)) => {
+                //let element = self.downcast::<HTMLButtonElement>().unwrap();
+                println!("2");
+               
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLObjectElement)) => {
+                //let element = self.downcast::<HTMLObjectElement>().unwrap();
+                println!("3");
+               
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLSelectElement)) => {
+                //let element = self.downcast::<HTMLSelectElement>().unwrap();
+               println!("4");
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLTextAreaElement)) => {
+                //let element = self.downcast::<HTMLTextAreaElement>().unwrap();
+               println!("5");
+            },
+            NodeTypeId::Element(_)  => {
+                println!("6");
+            }
+            NodeTypeId::CharacterData(_)  => {
+                println!("6");
+            }
+            NodeTypeId::Document(_)  => {
+                println!("6");
+            }
+            NodeTypeId::DocumentFragment  => {
+                println!("6");
+            }
+            NodeTypeId::DocumentType  => {
+                println!("6");
+            }
+
+        };
         false
     }
 }
