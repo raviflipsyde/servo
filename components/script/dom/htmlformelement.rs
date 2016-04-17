@@ -46,6 +46,8 @@ use string_cache::Atom;
 use task_source::dom_manipulation::DOMManipulationTask;
 use url::form_urlencoded::serialize;
 use util::str::DOMString;
+use dom::validitystate::ValidityState;
+use dom::bindings::codegen::Bindings::ValidityStateBinding::ValidityStateMethods;
 
 #[derive(JSTraceable, PartialEq, Clone, Copy, HeapSizeOf)]
 pub struct GenerationId(u32);
@@ -366,6 +368,17 @@ impl HTMLFormElement {
         // Step 1-3
         let invalid_controls = node.traverse_preorder().filter_map(|field| {
             if let Some(_el) = field.downcast::<Element>() {
+                let a=_el.as_maybe_validatable();
+                match a {
+                    Some(x) => {
+                        
+                        let window = window_from_node(self);
+                        let vs = ValidityState::new(window.r(), _el);
+                        vs.Valid();
+                        
+                    },
+                    None => {}
+                }
                 None // Remove this line if you decide to refactor
 
                 // XXXKiChjang: Form control elements should each have a candidate_for_validation
