@@ -359,28 +359,41 @@ impl HTMLFormElement {
         Err(())
     }
 
+    fn check_if_candidate_for_validation(&self, element: &Element) -> bool{
+        
+        match element.as_maybe_validatable() {
+                    Some(x) => {
+                        println!("retun true" );
+                        return true                        
+                    },
+                    None => { println!("retun false" );
+                        return false }
+                }
+        
+    }
+
+    fn check_if_candidate_satisfies_constraints(&self, element: &Element) -> bool{
+        let vs = ValidityState::new(window_from_node(self).r(), element);
+        return  vs.Valid()
+        
+    }
     /// Statitically validate the constraints of form elements
     /// https://html.spec.whatwg.org/multipage/#statically-validate-the-constraints
     fn static_validation(&self) -> Result<(), Vec<FormSubmittableElement>> {
         let node = self.upcast::<Node>();
+
         // FIXME(#3553): This is an incorrect way of getting controls owned by the
         //               form, refactor this when html5ever's form owner PR lands
         // Step 1-3
         let invalid_controls = node.traverse_preorder().filter_map(|field| {
+            
             if let Some(_el) = field.downcast::<Element>() {
-                let a=_el.as_maybe_validatable();
-                match a {
-                    Some(x) => {
-                        
-                        let window = window_from_node(self);
-                        let vs = ValidityState::new(window.r(), _el);
-                        vs.Valid();
-                        
-                    },
-                    None => {}
+                if(self.check_if_candidate_for_validation(_el) & !self.check_if_candidate_satisfies_constraints(_el)) {                
+                return Some(FormSubmittableElement::InputElement(Root::from_ref(_el.downcast::<HTMLInputElement>().unwrap())))   
                 }
-                None // Remove this line if you decide to refactor
-
+               // None // Remove this line if you decide to refactor
+                
+                None
                 // XXXKiChjang: Form control elements should each have a candidate_for_validation
                 //              and satisfies_constraints methods
 
@@ -389,7 +402,9 @@ impl HTMLFormElement {
             }
         }).collect::<Vec<FormSubmittableElement>>();
         // Step 4
-        if invalid_controls.is_empty() { return Ok(()); }
+        if invalid_controls.is_empty() { 
+            println!("invalid_controls is_empty" );
+            return Ok(()); }
         // Step 5-6
         let unhandled_invalid_controls = invalid_controls.into_iter().filter_map(|field| {
             let event = field.as_event_target()
