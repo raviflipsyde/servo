@@ -18,6 +18,8 @@ use dom::htmlobjectelement::HTMLObjectElement;
 use dom::htmltextareaelement::HTMLTextAreaElement;
 use dom::validation::Validatable;
 use dom::bindings::inheritance::{Castable, ElementTypeId, HTMLElementTypeId, NodeTypeId};
+use dom::htmlformelement::{FormControl, FormDatum, FormSubmitter, HTMLFormElement};
+//use dom::htmlformelement::FormDatumGetter;
 // https://html.spec.whatwg.org/multipage/#validity-states
 #[derive_JSTraceable]
 #[derive_HeapSizeOf]
@@ -64,6 +66,13 @@ impl ValidityStateMethods for ValidityState {
 
     // https://html.spec.whatwg.org/multipage/#dom-validitystate-valuemissing
     fn ValueMissing(&self) -> bool {
+        for attr in self.element.attrs().iter() {
+                    let n = &**attr.name();
+                    let v = &**attr.value();
+                    if str::eq(n,"required") {
+                        println!("attrVal = {}, {}",n,v );
+                    }                    
+                }
         false
     }
 
@@ -117,8 +126,20 @@ impl ValidityStateMethods for ValidityState {
         
         let element = match self.element.upcast::<Node>().type_id() {
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLInputElement)) => {
-                //let element = self.element.downcast::<HTMLInputElement>().unwrap();
-                println!("1");
+                self.ValueMissing();
+                let element1 = self.element.downcast::<HTMLInputElement>().unwrap();
+                let data = element1.form_datum(Some(FormSubmitter::InputElement(element1)));
+
+                match data {
+                    Some(x) => {
+                        println!("x is {}", x.value);
+                    },
+                    None => {
+                        println!("None");
+                    }
+                }              
+
+                //println!("1");
                
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLButtonElement)) => {
