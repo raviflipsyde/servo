@@ -351,7 +351,9 @@ impl HTMLFormElement {
         // Step 1-3
         let _unhandled_invalid_controls = match self.static_validation() {
             Ok(()) => return Ok(()),
-            Err(err) => err
+            Err(err) => {
+            println!("Error in form fields"); 
+                err }
         };
         // TODO: Report the problems with the constraints of at least one of
         //       the elements given in unhandled invalid controls to the user
@@ -363,10 +365,10 @@ impl HTMLFormElement {
         
         match element.as_maybe_validatable() {
                     Some(x) => {
-                        println!("retun true" );
+                      //  println!("retun true" );
                         return true                        
                     },
-                    None => { println!("retun false" );
+                    None => { //println!("retun false" );
                         return false }
                 }
         
@@ -388,14 +390,36 @@ impl HTMLFormElement {
         let invalid_controls = node.traverse_preorder().filter_map(|field| {
             
             if let Some(_el) = field.downcast::<Element>() {
-                if(self.check_if_candidate_for_validation(_el) & !self.check_if_candidate_satisfies_constraints(_el)) {                
-                return Some(FormSubmittableElement::InputElement(Root::from_ref(_el.downcast::<HTMLInputElement>().unwrap())))   
+                
+                if(self.check_if_candidate_for_validation(_el) & !self.check_if_candidate_satisfies_constraints(_el)) {
+
+                    match _el.upcast::<Node>().type_id() {
+                        NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLInputElement)) => {
+                            return Some(FormSubmittableElement::InputElement(Root::from_ref(_el.downcast::<HTMLInputElement>().unwrap())))   
+                        }
+                        NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLButtonElement)) => {
+                            return Some(FormSubmittableElement::ButtonElement(Root::from_ref(_el.downcast::<HTMLButtonElement>().unwrap())))   
+                        }
+                        NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLSelectElement)) => {
+                            return Some(FormSubmittableElement::SelectElement(Root::from_ref(_el.downcast::<HTMLSelectElement>().unwrap())))   
+                        }
+                        NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLTextAreaElement)) => {
+                            return Some(FormSubmittableElement::TextAreaElement(Root::from_ref(_el.downcast::<HTMLTextAreaElement>().unwrap())))
+                        }
+                        NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLObjectElement)) => {
+                            return Some(FormSubmittableElement::ObjectElement(Root::from_ref(_el.downcast::<HTMLObjectElement>().unwrap())))
+                        }
+                        _ => { }
+                        }
+
+                //return Some(FormSubmittableElement::InputElement(Root::from_ref(_el.downcast::<HTMLInputElement>().unwrap())))   
                 }
                // None // Remove this line if you decide to refactor
                 
                 None
                 // XXXKiChjang: Form control elements should each have a candidate_for_validation
                 //              and satisfies_constraints methods
+
 
             } else {
                 None
@@ -406,6 +430,7 @@ impl HTMLFormElement {
             println!("invalid_controls is_empty" );
             return Ok(()); }
         // Step 5-6
+        println!("invalid_controls is_NOT_empty" );
         let unhandled_invalid_controls = invalid_controls.into_iter().filter_map(|field| {
             let event = field.as_event_target()
                 .fire_event("invalid",
