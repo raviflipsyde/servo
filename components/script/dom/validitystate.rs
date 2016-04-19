@@ -66,13 +66,69 @@ impl ValidityStateMethods for ValidityState {
 
     // https://html.spec.whatwg.org/multipage/#dom-validitystate-valuemissing
     fn ValueMissing(&self) -> bool {
-        for attr in self.element.attrs().iter() {
-                    let n = &**attr.name();
-                    let v = &**attr.value();
-                    if str::eq(n,"required") {
-                        println!("attrVal = {}, {}",n,v );
-                    }                    
-                }
+        let element = match self.element.upcast::<Node>().type_id() {
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLInputElement)) => {
+                
+                let element1 = self.element.downcast::<HTMLInputElement>().unwrap();
+                let data = element1.form_datum(Some(FormSubmitter::InputElement(element1)));
+
+                match data {
+                    Some(data_object) => {                        
+                        for attr in self.element.attrs().iter() {
+                            let attr_name = &**attr.name();
+                            if str::eq(attr_name,"required") {
+                                if data_object.value.is_empty() {
+                                    println!("Error - No input has been provided for a required field");
+                                    return false;
+                                } else {
+                                    println!("Value is {}", data_object.value);
+                                    return true;
+                                }
+                            }                    
+                        }
+                    },
+                    None => {
+                        println!("None");
+                        return true;
+                    }
+                }                
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLButtonElement)) => {
+                //let element = self.downcast::<HTMLButtonElement>().unwrap();
+                println!("2");
+               
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLObjectElement)) => {
+                //let element = self.downcast::<HTMLObjectElement>().unwrap();
+                println!("3");
+               
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLSelectElement)) => {
+                //let element = self.downcast::<HTMLSelectElement>().unwrap();
+               println!("4");
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLTextAreaElement)) => {
+                //let element = self.downcast::<HTMLTextAreaElement>().unwrap();
+               println!("5");
+            },
+            NodeTypeId::Element(_)  => {
+                println!("6");
+            }
+            NodeTypeId::CharacterData(_)  => {
+                println!("6");
+            }
+            NodeTypeId::Document(_)  => {
+                println!("6");
+            }
+            NodeTypeId::DocumentFragment  => {
+                println!("6");
+            }
+            NodeTypeId::DocumentType  => {
+                println!("6");
+            }
+
+        };
+        
         false
     }
 
@@ -122,61 +178,7 @@ impl ValidityStateMethods for ValidityState {
     }
 
     // https://html.spec.whatwg.org/multipage/#dom-validitystate-valid
-    fn Valid(&self) -> bool {
-        
-        let element = match self.element.upcast::<Node>().type_id() {
-            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLInputElement)) => {
-                self.ValueMissing();
-                let element1 = self.element.downcast::<HTMLInputElement>().unwrap();
-                let data = element1.form_datum(Some(FormSubmitter::InputElement(element1)));
-
-                match data {
-                    Some(x) => {
-                        println!("x is {}", x.value);
-                    },
-                    None => {
-                        println!("None");
-                    }
-                }              
-
-                //println!("1");
-               
-            },
-            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLButtonElement)) => {
-                //let element = self.downcast::<HTMLButtonElement>().unwrap();
-                println!("2");
-               
-            },
-            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLObjectElement)) => {
-                //let element = self.downcast::<HTMLObjectElement>().unwrap();
-                println!("3");
-               
-            },
-            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLSelectElement)) => {
-                //let element = self.downcast::<HTMLSelectElement>().unwrap();
-               println!("4");
-            },
-            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLTextAreaElement)) => {
-                //let element = self.downcast::<HTMLTextAreaElement>().unwrap();
-               println!("5");
-            },
-            NodeTypeId::Element(_)  => {
-                println!("6");
-            }
-            NodeTypeId::CharacterData(_)  => {
-                println!("6");
-            }
-            NodeTypeId::Document(_)  => {
-                println!("6");
-            }
-            NodeTypeId::DocumentFragment  => {
-                println!("6");
-            }
-            NodeTypeId::DocumentType  => {
-                println!("6");
-            }
-
-        };
-        false
+    fn Valid(&self) -> bool {        
+        return self.ValueMissing();
     }
 }
