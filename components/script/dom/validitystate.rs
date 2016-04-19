@@ -134,46 +134,398 @@ impl ValidityStateMethods for ValidityState {
 
     // https://html.spec.whatwg.org/multipage/#dom-validitystate-typemismatch
     fn TypeMismatch(&self) -> bool {
+        let element = match self.element.upcast::<Node>().type_id() {
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLInputElement)) => {
+                println!("1");     
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLButtonElement)) => {
+                //let element = self.downcast::<HTMLButtonElement>().unwrap();
+                println!("2");
+               
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLObjectElement)) => {
+                //let element = self.downcast::<HTMLObjectElement>().unwrap();
+                println!("3");
+               
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLSelectElement)) => {
+                //let element = self.downcast::<HTMLSelectElement>().unwrap();
+               println!("4");
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLTextAreaElement)) => {
+                //let element = self.downcast::<HTMLTextAreaElement>().unwrap();
+               println!("5");
+            },
+            NodeTypeId::Element(_)  => {
+                println!("6");
+            }
+            NodeTypeId::CharacterData(_)  => {
+                println!("6");
+            }
+            NodeTypeId::Document(_)  => {
+                println!("6");
+            }
+            NodeTypeId::DocumentFragment  => {
+                println!("6");
+            }
+            NodeTypeId::DocumentType  => {
+                println!("6");
+            }
+
+        };
+
         false
     }
 
     // https://html.spec.whatwg.org/multipage/#dom-validitystate-patternmismatch
     fn PatternMismatch(&self) -> bool {
+        let element = match self.element.upcast::<Node>().type_id() {
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLInputElement)) => {
+                println!("1");     
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLButtonElement)) => {
+                //let element = self.downcast::<HTMLButtonElement>().unwrap();
+                println!("2");
+               
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLObjectElement)) => {
+                //let element = self.downcast::<HTMLObjectElement>().unwrap();
+                println!("3");
+               
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLSelectElement)) => {
+                //let element = self.downcast::<HTMLSelectElement>().unwrap();
+               println!("4");
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLTextAreaElement)) => {
+                //let element = self.downcast::<HTMLTextAreaElement>().unwrap();
+               println!("5");
+            },
+            NodeTypeId::Element(_)  => {
+                println!("6");
+            }
+            NodeTypeId::CharacterData(_)  => {
+                println!("6");
+            }
+            NodeTypeId::Document(_)  => {
+                println!("6");
+            }
+            NodeTypeId::DocumentFragment  => {
+                println!("6");
+            }
+            NodeTypeId::DocumentType  => {
+                println!("6");
+            }
+
+        };
         false
     }
 
     // https://html.spec.whatwg.org/multipage/#dom-validitystate-toolong
     fn TooLong(&self) -> bool {
+        let element = match self.element.upcast::<Node>().type_id() {
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLInputElement)) => {
+                println!("1");     
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLButtonElement)) => {
+                //let element = self.downcast::<HTMLButtonElement>().unwrap();
+                println!("2");
+               
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLObjectElement)) => {
+                //let element = self.downcast::<HTMLObjectElement>().unwrap();
+                println!("3");
+               
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLSelectElement)) => {
+                //let element = self.downcast::<HTMLSelectElement>().unwrap();
+               println!("4");
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLTextAreaElement)) => {
+                //let element = self.downcast::<HTMLTextAreaElement>().unwrap();
+               println!("5");
+            },
+            NodeTypeId::Element(_)  => {
+                println!("6");
+            }
+            NodeTypeId::CharacterData(_)  => {
+                println!("6");
+            }
+            NodeTypeId::Document(_)  => {
+                println!("6");
+            }
+            NodeTypeId::DocumentFragment  => {
+                println!("6");
+            }
+            NodeTypeId::DocumentType  => {
+                println!("6");
+            }
+
+        };
         false
     }
 
     // https://html.spec.whatwg.org/multipage/#dom-validitystate-tooshort
     fn TooShort(&self) -> bool {
+        let element = match self.element.upcast::<Node>().type_id() {
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLInputElement)) => {
+                println!("1");     
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLButtonElement)) => {
+                //let element = self.downcast::<HTMLButtonElement>().unwrap();
+                println!("2");
+               
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLObjectElement)) => {
+                //let element = self.downcast::<HTMLObjectElement>().unwrap();
+                println!("3");
+               
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLSelectElement)) => {
+                //let element = self.downcast::<HTMLSelectElement>().unwrap();
+               println!("4");
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLTextAreaElement)) => {
+                //let element = self.downcast::<HTMLTextAreaElement>().unwrap();
+               println!("5");
+            },
+            NodeTypeId::Element(_)  => {
+                println!("6");
+            }
+            NodeTypeId::CharacterData(_)  => {
+                println!("6");
+            }
+            NodeTypeId::Document(_)  => {
+                println!("6");
+            }
+            NodeTypeId::DocumentFragment  => {
+                println!("6");
+            }
+            NodeTypeId::DocumentType  => {
+                println!("6");
+            }
+
+        };
         false
     }
 
     // https://html.spec.whatwg.org/multipage/#dom-validitystate-rangeunderflow
     fn RangeUnderflow(&self) -> bool {
+        let element = match self.element.upcast::<Node>().type_id() {
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLInputElement)) => {
+                println!("1");     
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLButtonElement)) => {
+                //let element = self.downcast::<HTMLButtonElement>().unwrap();
+                println!("2");
+               
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLObjectElement)) => {
+                //let element = self.downcast::<HTMLObjectElement>().unwrap();
+                println!("3");
+               
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLSelectElement)) => {
+                //let element = self.downcast::<HTMLSelectElement>().unwrap();
+               println!("4");
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLTextAreaElement)) => {
+                //let element = self.downcast::<HTMLTextAreaElement>().unwrap();
+               println!("5");
+            },
+            NodeTypeId::Element(_)  => {
+                println!("6");
+            }
+            NodeTypeId::CharacterData(_)  => {
+                println!("6");
+            }
+            NodeTypeId::Document(_)  => {
+                println!("6");
+            }
+            NodeTypeId::DocumentFragment  => {
+                println!("6");
+            }
+            NodeTypeId::DocumentType  => {
+                println!("6");
+            }
+
+        };
         false
     }
 
     // https://html.spec.whatwg.org/multipage/#dom-validitystate-rangeoverflow
     fn RangeOverflow(&self) -> bool {
+        let element = match self.element.upcast::<Node>().type_id() {
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLInputElement)) => {
+                println!("1");     
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLButtonElement)) => {
+                //let element = self.downcast::<HTMLButtonElement>().unwrap();
+                println!("2");
+               
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLObjectElement)) => {
+                //let element = self.downcast::<HTMLObjectElement>().unwrap();
+                println!("3");
+               
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLSelectElement)) => {
+                //let element = self.downcast::<HTMLSelectElement>().unwrap();
+               println!("4");
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLTextAreaElement)) => {
+                //let element = self.downcast::<HTMLTextAreaElement>().unwrap();
+               println!("5");
+            },
+            NodeTypeId::Element(_)  => {
+                println!("6");
+            }
+            NodeTypeId::CharacterData(_)  => {
+                println!("6");
+            }
+            NodeTypeId::Document(_)  => {
+                println!("6");
+            }
+            NodeTypeId::DocumentFragment  => {
+                println!("6");
+            }
+            NodeTypeId::DocumentType  => {
+                println!("6");
+            }
+
+        };
         false
     }
 
     // https://html.spec.whatwg.org/multipage/#dom-validitystate-stepmismatch
     fn StepMismatch(&self) -> bool {
+        let element = match self.element.upcast::<Node>().type_id() {
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLInputElement)) => {
+                println!("1");     
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLButtonElement)) => {
+                //let element = self.downcast::<HTMLButtonElement>().unwrap();
+                println!("2");
+               
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLObjectElement)) => {
+                //let element = self.downcast::<HTMLObjectElement>().unwrap();
+                println!("3");
+               
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLSelectElement)) => {
+                //let element = self.downcast::<HTMLSelectElement>().unwrap();
+               println!("4");
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLTextAreaElement)) => {
+                //let element = self.downcast::<HTMLTextAreaElement>().unwrap();
+               println!("5");
+            },
+            NodeTypeId::Element(_)  => {
+                println!("6");
+            }
+            NodeTypeId::CharacterData(_)  => {
+                println!("6");
+            }
+            NodeTypeId::Document(_)  => {
+                println!("6");
+            }
+            NodeTypeId::DocumentFragment  => {
+                println!("6");
+            }
+            NodeTypeId::DocumentType  => {
+                println!("6");
+            }
+
+        };
         false
     }
 
     // https://html.spec.whatwg.org/multipage/#dom-validitystate-badinput
     fn BadInput(&self) -> bool {
+        let element = match self.element.upcast::<Node>().type_id() {
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLInputElement)) => {
+                println!("1");     
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLButtonElement)) => {
+                //let element = self.downcast::<HTMLButtonElement>().unwrap();
+                println!("2");
+               
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLObjectElement)) => {
+                //let element = self.downcast::<HTMLObjectElement>().unwrap();
+                println!("3");
+               
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLSelectElement)) => {
+                //let element = self.downcast::<HTMLSelectElement>().unwrap();
+               println!("4");
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLTextAreaElement)) => {
+                //let element = self.downcast::<HTMLTextAreaElement>().unwrap();
+               println!("5");
+            },
+            NodeTypeId::Element(_)  => {
+                println!("6");
+            }
+            NodeTypeId::CharacterData(_)  => {
+                println!("6");
+            }
+            NodeTypeId::Document(_)  => {
+                println!("6");
+            }
+            NodeTypeId::DocumentFragment  => {
+                println!("6");
+            }
+            NodeTypeId::DocumentType  => {
+                println!("6");
+            }
+
+        };
         false
     }
 
     // https://html.spec.whatwg.org/multipage/#dom-validitystate-customerror
     fn CustomError(&self) -> bool {
+        let element = match self.element.upcast::<Node>().type_id() {
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLInputElement)) => {
+                println!("1");     
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLButtonElement)) => {
+                //let element = self.downcast::<HTMLButtonElement>().unwrap();
+                println!("2");
+               
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLObjectElement)) => {
+                //let element = self.downcast::<HTMLObjectElement>().unwrap();
+                println!("3");
+               
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLSelectElement)) => {
+                //let element = self.downcast::<HTMLSelectElement>().unwrap();
+               println!("4");
+            },
+            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLTextAreaElement)) => {
+                //let element = self.downcast::<HTMLTextAreaElement>().unwrap();
+               println!("5");
+            },
+            NodeTypeId::Element(_)  => {
+                println!("6");
+            }
+            NodeTypeId::CharacterData(_)  => {
+                println!("6");
+            }
+            NodeTypeId::Document(_)  => {
+                println!("6");
+            }
+            NodeTypeId::DocumentFragment  => {
+                println!("6");
+            }
+            NodeTypeId::DocumentType  => {
+                println!("6");
+            }
+
+        };
         false
     }
 
