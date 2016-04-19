@@ -251,7 +251,8 @@ impl HTMLFormElement {
         {
             if self.interactive_validation().is_err() {
                 // TODO: Implement event handlers on all form control elements
-                self.upcast::<EventTarget>().fire_simple_event("invalid");
+               self.upcast::<EventTarget>().fire_simple_event("invalid");
+               
                 return;
             }
         }
@@ -352,7 +353,7 @@ impl HTMLFormElement {
         let _unhandled_invalid_controls = match self.static_validation() {
             Ok(()) => return Ok(()),
             Err(err) => {
-            println!("Error in form fields"); 
+             
                 err }
         };
         // TODO: Report the problems with the constraints of at least one of
