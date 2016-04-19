@@ -94,13 +94,10 @@ impl ValidityStateMethods for ValidityState {
                 }                
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLButtonElement)) => {
-                //let element = self.downcast::<HTMLButtonElement>().unwrap();
-                println!("2");
-               
+               return true;
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLObjectElement)) => {
-                //let element = self.downcast::<HTMLObjectElement>().unwrap();
-                println!("3");
+                return true;
                
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLSelectElement)) => {
