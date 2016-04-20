@@ -19,6 +19,10 @@ use dom::htmltextareaelement::HTMLTextAreaElement;
 use dom::validation::Validatable;
 use dom::bindings::inheritance::{Castable, ElementTypeId, HTMLElementTypeId, NodeTypeId};
 use dom::htmlformelement::{FormControl, FormDatum, FormSubmitter, HTMLFormElement};
+use dom::htmloptionelement::HTMLOptionElement;
+use dom::bindings::codegen::Bindings::HTMLSelectElementBinding::HTMLSelectElementMethods;
+use dom::bindings::codegen::Bindings::HTMLOptionElementBinding::HTMLOptionElementMethods;
+use dom::bindings::codegen::Bindings::HTMLTextAreaElementBinding::HTMLTextAreaElementMethods;
 //use dom::htmlformelement::FormDatumGetter;
 // https://html.spec.whatwg.org/multipage/#validity-states
 #[derive_JSTraceable]
@@ -101,27 +105,48 @@ impl ValidityStateMethods for ValidityState {
                
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLSelectElement)) => {
-                //let element = self.downcast::<HTMLSelectElement>().unwrap();
-               println!("4");
+                let element1 = self.element.downcast::<HTMLSelectElement>().unwrap();
+                let node = element1.upcast::<Node>();
+                /*if element1.Name().is_empty() {
+                    return false;
+                }*/
+                
+                for attr in self.element.attrs().iter() {
+                    let attr_name = &**attr.name();
+                    if str::eq(attr_name,"required") {
+                        for opt in node.traverse_preorder().filter_map(Root::downcast::<HTMLOptionElement>) {
+                            let element = opt.upcast::<Element>();
+                            if opt.Selected() && element.enabled_state() && !opt.Value().is_empty(){
+                                return true;
+                            }
+                        }
+                    }
+                }                
+                return false;
+
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLTextAreaElement)) => {
-                //let element = self.downcast::<HTMLTextAreaElement>().unwrap();
-               println!("5");
+                let textarea = self.element.downcast::<HTMLTextAreaElement>().unwrap();
+                let name = textarea.Name();
+                if !name.is_empty() {
+                    println!("Value in text area is {}", textarea.Value())
+                }
+                
             },
             NodeTypeId::Element(_)  => {
                 println!("6");
             }
             NodeTypeId::CharacterData(_)  => {
-                println!("6");
+                println!("7");
             }
             NodeTypeId::Document(_)  => {
-                println!("6");
+                println!("8");
             }
             NodeTypeId::DocumentFragment  => {
-                println!("6");
+                println!("9");
             }
             NodeTypeId::DocumentType  => {
-                println!("6");
+                println!("10");
             }
 
         };
