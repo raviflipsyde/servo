@@ -374,6 +374,24 @@ impl HTMLFormElement {
         
     }
 
+    pub fn checkValdity(&self) -> bool{
+         let _unhandled_invalid_controls = match self.static_validation() {
+            Ok(()) => return true,
+            Err(err) => {
+            println!("Error in form fields in CheckValdity"); 
+                return false }
+        };
+
+    }
+
+    pub fn reportValidity(&self) -> bool{
+        if self.interactive_validation().is_err() {
+           return false;
+        } else {
+            return true;
+        }
+              
+    }
     fn check_if_candidate_satisfies_constraints(&self, element: &Element) -> bool{
         let vs = ValidityState::new(window_from_node(self).r(), element);
         return  vs.Valid()
