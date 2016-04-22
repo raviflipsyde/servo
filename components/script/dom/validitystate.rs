@@ -85,14 +85,12 @@ impl ValidityStateMethods for ValidityState {
                                     println!("Error - No input has been provided for a required field");
                                     return true;
                                 } else {
-                                    println!("Value is {}", data_object.value);
-                                    return false;
+                                   return false;
                                 }
                             }                    
                         }
                     },
                     None => {
-                        println!("None");
                         return false;
                     }
                 }                
@@ -142,24 +140,18 @@ impl ValidityStateMethods for ValidityState {
                 
             },
             NodeTypeId::Element(_)  => {
-
-                println!("6");
                 return false;
             }
             NodeTypeId::CharacterData(_)  => {
-                println!("7");
                 return false;
             }
             NodeTypeId::Document(_)  => {
-                println!("8");
                 return false;
             }
             NodeTypeId::DocumentFragment  => {
-                println!("9");
                 return false;
             }
             NodeTypeId::DocumentType  => {
-                println!("10");
                 return false;
             }
 
