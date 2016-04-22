@@ -83,25 +83,25 @@ impl ValidityStateMethods for ValidityState {
                             if str::eq(attr_name,"required") {
                                 if data_object.value.is_empty() {
                                     println!("Error - No input has been provided for a required field");
-                                    return false;
+                                    return true;
                                 } else {
                                     println!("Value is {}", data_object.value);
-                                    return true;
+                                    return false;
                                 }
                             }                    
                         }
                     },
                     None => {
                         println!("None");
-                        return true;
+                        return false;
                     }
                 }                
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLButtonElement)) => {
-               return true;
+               return false;
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLObjectElement)) => {
-                return true;
+                return false;
                
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLSelectElement)) => {
@@ -117,36 +117,50 @@ impl ValidityStateMethods for ValidityState {
                         for opt in node.traverse_preorder().filter_map(Root::downcast::<HTMLOptionElement>) {
                             let element = opt.upcast::<Element>();
                             if opt.Selected() && element.enabled_state() && !opt.Value().is_empty(){
-                                return true;
+                                return false;
                             }
                         }
                     }
                 }                
-                return false;
+                return true;
 
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLTextAreaElement)) => {
                 let textarea = self.element.downcast::<HTMLTextAreaElement>().unwrap();
                 let name = textarea.Name();
-                if !name.is_empty() {
-                    println!("Value in text area is {}", textarea.Value())
+                for attr in self.element.attrs().iter() {
+                    let attr_name = &**attr.name();
+                    if str::eq(attr_name,"required") {
+                        if textarea.Value().is_empty() {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
                 }
+                return false;
                 
             },
             NodeTypeId::Element(_)  => {
+
                 println!("6");
+                return false;
             }
             NodeTypeId::CharacterData(_)  => {
                 println!("7");
+                return false;
             }
             NodeTypeId::Document(_)  => {
                 println!("8");
+                return false;
             }
             NodeTypeId::DocumentFragment  => {
                 println!("9");
+                return false;
             }
             NodeTypeId::DocumentType  => {
                 println!("10");
+                return false;
             }
 
         };
@@ -553,6 +567,6 @@ impl ValidityStateMethods for ValidityState {
 
     // https://html.spec.whatwg.org/multipage/#dom-validitystate-valid
     fn Valid(&self) -> bool {        
-        return self.ValueMissing();
+        return !self.ValueMissing();
     }
 }
