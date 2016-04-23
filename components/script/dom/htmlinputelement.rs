@@ -857,9 +857,11 @@ impl VirtualMethods for HTMLInputElement {
     }
 
     fn handle_event(&self, event: &Event) {
+        
         if let Some(s) = self.super_type() {
             s.handle_event(event);
         }
+
 
         if event.type_() == atom!("click") && !event.DefaultPrevented() {
             // TODO: Dispatch events for non activatable inputs
@@ -899,7 +901,14 @@ impl VirtualMethods for HTMLInputElement {
                         Nothing => (),
                     }
                 }
+        
+        } else if event.type_() == atom!("invalid") && !event.DefaultPrevented(){
+                 
+                 document_from_node(self).request_focus(self.upcast());
+                
+                println!("Handle Error in htmlinput element");
         }
+        
     }
 }
 
