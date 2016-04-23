@@ -349,13 +349,17 @@ impl HTMLFormElement {
     /// Interactively validate the constraints of form elements
     /// https://html.spec.whatwg.org/multipage/#interactively-validate-the-constraints
     fn interactive_validation(&self) -> Result<(), ()> {
+        let doc = document_from_node(self);
         // Step 1-3
         let _unhandled_invalid_controls = match self.static_validation() {
             Ok(()) => return Ok(()),
             Err(err) => {
-             
-                err }
+                  doc.request_focus(err[0].as_event_target().downcast::<Element>().unwrap());
+                      
+             err }
         };
+
+
         // TODO: Report the problems with the constraints of at least one of
         //       the elements given in unhandled invalid controls to the user
         // Step 4
