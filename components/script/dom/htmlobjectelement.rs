@@ -93,21 +93,10 @@ impl HTMLObjectElementMethods for HTMLObjectElement {
 }
 
 impl Validatable for HTMLObjectElement {
-    fn get_attribute_value(&self, input_attr_name: &String) -> Option<&str> {
-        for attr in self.upcast::<Element>().attrs().iter() {
-            let attr_name = &**attr.name();
-            if str::eq(attr_name, input_attr_name) {
-                let attr_value = &**attr.value();
-                if attr_value.is_empty() {
-                    let return_string = "";
-                    return Some(return_string);
-                }
-                return Some(attr_value);
-            }
-        }
-
-        None;
-    } 
+    fn get_value_for_validation(&self) -> Option<DOMString>{
+        None
+    }
+    
 }
 impl VirtualMethods for HTMLObjectElement {
     fn super_type(&self) -> Option<&VirtualMethods> {

@@ -23,11 +23,14 @@ use dom::htmloptionelement::HTMLOptionElement;
 use dom::bindings::codegen::Bindings::HTMLSelectElementBinding::HTMLSelectElementMethods;
 use dom::bindings::codegen::Bindings::HTMLOptionElementBinding::HTMLOptionElementMethods;
 use dom::bindings::codegen::Bindings::HTMLTextAreaElementBinding::HTMLTextAreaElementMethods;
+use util::str::DOMString;
+use dom::bindings::codegen::Bindings::AttrBinding::AttrMethods;
+
+
 //use dom::htmlformelement::FormDatumGetter;
 // https://html.spec.whatwg.org/multipage/#validity-states
-#[derive_JSTraceable]
-#[derive_HeapSizeOf]
-pub enum ValidityStatus {
+#[derive(JSTraceable,HeapSizeOf)]
+pub enum ValidityStates {
     ValueMissing,
     TypeMismatch,
     PatternMismatch,
@@ -46,7 +49,7 @@ pub enum ValidityStatus {
 pub struct ValidityState {
     reflector_: Reflector,
     element: JS<Element>,
-    state: ValidityStatus
+    state: ValidityStates
 }
 
 
@@ -55,7 +58,7 @@ impl ValidityState {
         ValidityState {
             reflector_: Reflector::new(),
             element: JS::from_ref(element),
-            state: ValidityStatus::Valid
+            state: ValidityStates::Valid
         }
     }
 
@@ -73,33 +76,27 @@ impl ValidityStateMethods for ValidityState {
     fn ValueMissing(&self) -> bool {
         let element = match self.element.upcast::<Node>().type_id() {
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLInputElement)) => {
-                
-                let element1 = self.element.downcast::<HTMLInputElement>().unwrap();
-                let data = element1.form_datum(Some(FormSubmitter::InputElement(element1)));
-
-                match data {
-                    Some(data_object) => {  
-                        let attr_value_check = self.element.get_attribute_value("required");
-                        match attr_value_check {
-                            Some(attr_value) => {
-
-                                if data_object.value.is_empty() {
-                                    println!("Error - No input has been provided for a required field");
-                                    return true;
-                                } else {
-                                   return false;
-                                }
+                let attr_value_check = self.element.get_attribute_by_name(DOMString::from("required")).map(|s| s.Value());
+                match attr_value_check {
+                    Some(attr_value) => {
+                        let html_input_element = self.element.downcast::<HTMLInputElement>().unwrap();
+                        let input_value_check = html_input_element.get_value_for_validation();
+                        match input_value_check {
+                            Some(input_value) => {
+                                return false;
                             },
                             None => {
-                                return false;
+                                println!("Error - Value missing in html input element");
+                                return true;
                             }
-                        }               
-                        
+                        }                            
                     },
                     None => {
                         return false;
                     }
-                }                
+                } 
+                
+                //let data = element1.form_datum(Some(FormSubmitter::InputElement(element1)));              
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLButtonElement)) => {
                return false;
@@ -109,40 +106,48 @@ impl ValidityStateMethods for ValidityState {
                
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLSelectElement)) => {
-                let element1 = self.element.downcast::<HTMLSelectElement>().unwrap();
-                let node = element1.upcast::<Node>();
-                /*if element1.Name().is_empty() {
-                    return false;
-                }*/
-                
-                for attr in self.element.attrs().iter() {
-                    let attr_name = &**attr.name();
-                    if str::eq(attr_name,"required") {
-                        for opt in node.traverse_preorder().filter_map(Root::downcast::<HTMLOptionElement>) {
-                            let element = opt.upcast::<Element>();
-                            if opt.Selected() && element.enabled_state() && !opt.Value().is_empty(){
+                /*let attr_value_check = self.element.get_attribute_by_name(DOMString::from("required")).map(|s| s.Value());
+                match attr_value_check {
+                    Some(attr_value) => {
+                        let html_select_element = self.element.downcast::<HTMLSelectElement>().unwrap();
+                        let input_value_check = html_select_element.get_value_for_validation();
+                        match input_value_check {
+                            Some(input_value) => {
                                 return false;
+                            },
+                            None => {
+                                println!("Error - Value missing in html select area element");
+                                return true;
                             }
-                        }
+                        }                            
+                    },
+                    None => {
+                        return false;
                     }
-                }                
-                return true;
+                }*/
 
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLTextAreaElement)) => {
-                let textarea = self.element.downcast::<HTMLTextAreaElement>().unwrap();
-                let name = textarea.Name();
-                for attr in self.element.attrs().iter() {
-                    let attr_name = &**attr.name();
-                    if str::eq(attr_name,"required") {
-                        if textarea.Value().is_empty() {
-                            return true;
-                        } else {
-                            return false;
-                        }
+                let attr_value_check = self.element.get_attribute_by_name(DOMString::from("required")).map(|s| s.Value());
+                match attr_value_check {
+                    Some(attr_value) => {
+                        let html_textarea_element = self.element.downcast::<HTMLTextAreaElement>().unwrap();
+                        let input_value_check = html_textarea_element.get_value_for_validation();
+                        match input_value_check {
+                            Some(input_value) => {
+                                return false;
+                            },
+                            None => {
+                                println!("Error - Value missing in html text area element");
+                                return true;
+                            }
+                        }                            
+                    },
+                    None => {
+                        return false;
                     }
                 }
-                return false;
+                
                 
             },
             NodeTypeId::Element(_)  => {

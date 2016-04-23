@@ -1,8 +1,9 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+use util::str::DOMString;
 
 pub trait Validatable {
-	fn get_attribute_value(&self, input_attr_name:&String) -> Option<&str>;
-	//fn get_value_for_validation()
+	//fn get_attribute_value(&self, input_attr_name:&str) -> Option<&str>;
+	fn get_value_for_validation(&self) -> Option<DOMString>;
 }
