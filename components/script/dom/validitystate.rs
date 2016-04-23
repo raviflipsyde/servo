@@ -66,7 +66,8 @@ impl ValidityState {
     }
 }
 
-impl ValidityStateMethods for ValidityState {
+impl ValidityStateMethods for ValidityState {   
+
 
     // https://html.spec.whatwg.org/multipage/#dom-validitystate-valuemissing
     fn ValueMissing(&self) -> bool {
@@ -77,18 +78,23 @@ impl ValidityStateMethods for ValidityState {
                 let data = element1.form_datum(Some(FormSubmitter::InputElement(element1)));
 
                 match data {
-                    Some(data_object) => {                        
-                        for attr in self.element.attrs().iter() {
-                            let attr_name = &**attr.name();
-                            if str::eq(attr_name,"required") {
+                    Some(data_object) => {  
+                        let attr_value_check = self.element.get_attribute_value("required");
+                        match attr_value_check {
+                            Some(attr_value) => {
+
                                 if data_object.value.is_empty() {
                                     println!("Error - No input has been provided for a required field");
                                     return true;
                                 } else {
                                    return false;
                                 }
-                            }                    
-                        }
+                            },
+                            None => {
+                                return false;
+                            }
+                        }               
+                        
                     },
                     None => {
                         return false;

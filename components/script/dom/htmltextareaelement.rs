@@ -376,4 +376,20 @@ impl VirtualMethods for HTMLTextAreaElement {
 
 impl FormControl for HTMLTextAreaElement {}
 
-impl Validatable for HTMLTextAreaElement {}
+impl Validatable for HTMLTextAreaElement {
+    fn get_attribute_value(&self, input_attr_name: &String) -> Option<&str> {
+        for attr in self.upcast::<Element>().attrs().iter() {
+            let attr_name = &**attr.name();
+            if str::eq(attr_name, input_attr_name) {
+                let attr_value = &**attr.value();
+                if attr_value.is_empty() {
+                    let return_string = "";
+                    return Some(return_string);
+                }
+                return Some(attr_value);
+            }
+        }
+
+        None;
+    } 
+}
