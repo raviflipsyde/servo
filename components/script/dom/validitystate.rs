@@ -26,7 +26,7 @@ use dom::window::Window;
 use regex::Regex;
 use util::str::DOMString;
 
-// https://html.spec.whatwg.org/multipage/#validity-states
+/// https://html.spec.whatwg.org/multipage/#validity-states
 #[derive(JSTraceable, HeapSizeOf)]
 pub enum ValidityStates {
     ValueMissing,
@@ -42,8 +42,7 @@ pub enum ValidityStates {
     Valid
 }
 
-
-// https://html.spec.whatwg.org/multipage/#validitystate
+/// https://html.spec.whatwg.org/multipage/#validitystate
 #[dom_struct]
 pub struct ValidityState {
     reflector_: Reflector,
@@ -69,6 +68,7 @@ impl ValidityState {
 
 
 impl ValidityStateMethods for ValidityState {
+
     // https://html.spec.whatwg.org/multipage/#dom-validitystate-valuemissing
     fn ValueMissing(&self) -> bool {
         let element = match self.element.upcast::<Node>().type_id() {
@@ -163,6 +163,7 @@ impl ValidityStateMethods for ValidityState {
         };
         false
     }
+
     // https://html.spec.whatwg.org/multipage/#dom-validitystate-typemismatch
     fn TypeMismatch(&self) -> bool {
         let element = match self.element.upcast::<Node>().type_id() {
@@ -238,6 +239,7 @@ impl ValidityStateMethods for ValidityState {
         };
         false
     }
+
     // https://html.spec.whatwg.org/multipage/#dom-validitystate-patternmismatch
     fn PatternMismatch(&self) -> bool {
         let element = match self.element.upcast::<Node>().type_id() {
@@ -298,6 +300,7 @@ impl ValidityStateMethods for ValidityState {
         };
         false
     }
+
     // https://html.spec.whatwg.org/multipage/#dom-validitystate-toolong
     fn TooLong(&self) -> bool {
         let element = match self.element.upcast::<Node>().type_id() {
@@ -387,6 +390,7 @@ impl ValidityStateMethods for ValidityState {
         };
         false
     }
+
     // https://html.spec.whatwg.org/multipage/#dom-validitystate-tooshort
     fn TooShort(&self) -> bool {
         let element = match self.element.upcast::<Node>().type_id() {
@@ -476,6 +480,7 @@ impl ValidityStateMethods for ValidityState {
         };
         false
     }
+
     // https://html.spec.whatwg.org/multipage/#dom-validitystate-rangeunderflow
     fn RangeUnderflow(&self) -> bool {
         let element = match self.element.upcast::<Node>().type_id() {
@@ -542,6 +547,7 @@ impl ValidityStateMethods for ValidityState {
         };
         false
     }
+
     // https://html.spec.whatwg.org/multipage/#dom-validitystate-rangeoverflow
     fn RangeOverflow(&self) -> bool {
         let element = match self.element.upcast::<Node>().type_id() {
@@ -608,6 +614,7 @@ impl ValidityStateMethods for ValidityState {
         };
         false
     }
+
     // https://html.spec.whatwg.org/multipage/#dom-validitystate-stepmismatch
     fn StepMismatch(&self) -> bool {
         let element = match self.element.upcast::<Node>().type_id() {
@@ -674,6 +681,7 @@ impl ValidityStateMethods for ValidityState {
         };
         false
     }
+
     // https://html.spec.whatwg.org/multipage/#dom-validitystate-badinput
     fn BadInput(&self) -> bool {
         let element = match self.element.upcast::<Node>().type_id() {
@@ -714,6 +722,7 @@ impl ValidityStateMethods for ValidityState {
         };
         false
     }
+
     // https://html.spec.whatwg.org/multipage/#dom-validitystate-customerror
     fn CustomError(&self) -> bool {
         let element = match self.element.upcast::<Node>().type_id() {
@@ -754,6 +763,7 @@ impl ValidityStateMethods for ValidityState {
         };
         false
     }
+
     // https://html.spec.whatwg.org/multipage/#dom-validitystate-valid
     fn Valid(&self) -> bool {
         return !(self.ValueMissing()|
