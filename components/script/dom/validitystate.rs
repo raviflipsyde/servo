@@ -146,19 +146,14 @@ impl ValidityStateMethods for ValidityState {
                 }
             },
             NodeTypeId::Element(_)  => {
-                return false;
             }
             NodeTypeId::CharacterData(_)  => {
-                return false;
             }
             NodeTypeId::Document(_)  => {
-                return false;
             }
             NodeTypeId::DocumentFragment  => {
-                return false;
             }
             NodeTypeId::DocumentType  => {
-                return false;
             }
         };
         false
@@ -168,8 +163,9 @@ impl ValidityStateMethods for ValidityState {
     fn TypeMismatch(&self) -> bool {
         let element = match self.element.upcast::<Node>().type_id() {
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLInputElement)) => {
-                let regex_email: Regex = Regex::new(r"/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-] \
-                    {0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/").unwrap();
+                //let regex_email: Regex = Regex::new(r"/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-] \
+                //    {0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/").unwrap();
+                let regex_email: Regex = Regex::new(r"").unwrap();
                 let regex_url: Regex = Regex::new(r"").unwrap();
                 let regex_number: Regex = Regex::new(r"").unwrap();
                 let attr_value_check = self.element.get_attribute_by_name(DOMString::from("type"))
@@ -194,8 +190,8 @@ impl ValidityStateMethods for ValidityState {
                                 }
                             },
                             None => {
-                                println!("Error - Value missing in html input element");
-                                return true;
+                                println!("No Type Error - No Value in html input element");
+                                return false;
                             }
                         }
                     },
@@ -206,35 +202,22 @@ impl ValidityStateMethods for ValidityState {
                 //let data = element1.form_datum(Some(FormSubmitter::InputElement(element1)));
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLButtonElement)) => {
-                //let element = self.downcast::<HTMLButtonElement>().unwrap();
-                println!("2");
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLObjectElement)) => {
-                //let element = self.downcast::<HTMLObjectElement>().unwrap();
-                println!("3");
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLSelectElement)) => {
-                //let element = self.downcast::<HTMLSelectElement>().unwrap();
-               println!("4");
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLTextAreaElement)) => {
-                //let element = self.downcast::<HTMLTextAreaElement>().unwrap();
-               println!("5");
             },
             NodeTypeId::Element(_)  => {
-                println!("6");
             }
             NodeTypeId::CharacterData(_)  => {
-                println!("6");
             }
             NodeTypeId::Document(_)  => {
-                println!("6");
             }
             NodeTypeId::DocumentFragment  => {
-                println!("6");
             }
             NodeTypeId::DocumentType  => {
-                println!("6");
             }
         };
         false
@@ -256,7 +239,7 @@ impl ValidityStateMethods for ValidityState {
                                 return !regex.is_match(&*input_value);
                             },
                             None => {
-                                println!("No Error - No Value in html input element");
+                                println!("No Pattern Error - No Value in html input element");
                                 return false;
                             }
                         }
@@ -267,35 +250,22 @@ impl ValidityStateMethods for ValidityState {
                 }
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLButtonElement)) => {
-                //let element = self.downcast::<HTMLButtonElement>().unwrap();
-                println!("2");
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLObjectElement)) => {
-                //let element = self.downcast::<HTMLObjectElement>().unwrap();
-                println!("3");
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLSelectElement)) => {
-                //let element = self.downcast::<HTMLSelectElement>().unwrap();
-               println!("4");
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLTextAreaElement)) => {
-                //let element = self.downcast::<HTMLTextAreaElement>().unwrap();
-               println!("5");
             },
             NodeTypeId::Element(_)  => {
-                println!("6");
             }
             NodeTypeId::CharacterData(_)  => {
-                println!("6");
             }
             NodeTypeId::Document(_)  => {
-                println!("6");
             }
             NodeTypeId::DocumentFragment  => {
-                println!("6");
             }
             NodeTypeId::DocumentType  => {
-                println!("6");
             }
         };
         false
@@ -315,6 +285,7 @@ impl ValidityStateMethods for ValidityState {
                         match input_value_check {
                             Some(input_value) => {
                                 if input_value.len() > maxlength {
+                                    println!("Error - TooLong html input element");
                                     return true;
                                 }
                                 else {
@@ -322,7 +293,7 @@ impl ValidityStateMethods for ValidityState {
                                 }
                             },
                             None => {
-                                println!("No Error - No Value in html input element");
+                                println!("No Too Long Error - No Value in html input element");
                                 return false;
                             }
                         }
@@ -333,16 +304,10 @@ impl ValidityStateMethods for ValidityState {
                 }
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLButtonElement)) => {
-                //let element = self.downcast::<HTMLButtonElement>().unwrap();
-                println!("2");
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLObjectElement)) => {
-                //let element = self.downcast::<HTMLObjectElement>().unwrap();
-                println!("3");
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLSelectElement)) => {
-                //let element = self.downcast::<HTMLSelectElement>().unwrap();
-               println!("4");
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLTextAreaElement)) => {
                 let attr_value_check = self.element.get_attribute_by_name(DOMString::from("maxlength"))
@@ -355,15 +320,16 @@ impl ValidityStateMethods for ValidityState {
                         match input_value_check {
                             Some(input_value) => {
                              if input_value.len() > maxlength {
-                                    return true;
+                                        println!("Error - TooLong in text area");
+                                        return true;
                                 }
                                 else {
                                     return false;
                                 }
                             },
                             None => {
-                                println!("Error - Value missing in html text area element");
-                                return true;
+                                println!("No Too Long Error - Value missing in html text area element");
+                                return false;
                             }
                         }
                     },
@@ -373,19 +339,14 @@ impl ValidityStateMethods for ValidityState {
                 }
             },
             NodeTypeId::Element(_)  => {
-                println!("6");
             }
             NodeTypeId::CharacterData(_)  => {
-                println!("6");
             }
             NodeTypeId::Document(_)  => {
-                println!("6");
             }
             NodeTypeId::DocumentFragment  => {
-                println!("6");
             }
             NodeTypeId::DocumentType  => {
-                println!("6");
             }
         };
         false
@@ -405,6 +366,7 @@ impl ValidityStateMethods for ValidityState {
                         match input_value_check {
                             Some(input_value) => {
                                 if input_value.len() < minlength {
+                                    println!("Error - TooShort html input element");
                                     return true;
                                 }
                                 else {
@@ -412,7 +374,7 @@ impl ValidityStateMethods for ValidityState {
                                 }
                             },
                             None => {
-                                println!("No Error - No Value in html input element");
+                                println!("No TooShort Error - No Value in html input element");
                                 return false;
                             }
                         }
@@ -423,16 +385,10 @@ impl ValidityStateMethods for ValidityState {
                 }
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLButtonElement)) => {
-                //let element = self.downcast::<HTMLButtonElement>().unwrap();
-                println!("2");
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLObjectElement)) => {
-                //let element = self.downcast::<HTMLObjectElement>().unwrap();
-                println!("3");
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLSelectElement)) => {
-                //let element = self.downcast::<HTMLSelectElement>().unwrap();
-               println!("4");
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLTextAreaElement)) => {
                 let attr_value_check = self.element.get_attribute_by_name(DOMString::from("minlength"))
@@ -445,6 +401,7 @@ impl ValidityStateMethods for ValidityState {
                         match input_value_check {
                             Some(input_value) => {
                              if input_value.len() < minlength {
+                                    println!("Error - TooShort html area element");
                                     return true;
                                 }
                                 else {
@@ -452,8 +409,8 @@ impl ValidityStateMethods for ValidityState {
                                 }
                             },
                             None => {
-                                println!("Error - Value missing in html text area element");
-                                return true;
+                                println!("No TooShort Error - Value missing in html text area element");
+                                return false;
                             }
                         }
                     },
@@ -463,19 +420,14 @@ impl ValidityStateMethods for ValidityState {
                 }
             },
             NodeTypeId::Element(_)  => {
-                println!("6");
             }
             NodeTypeId::CharacterData(_)  => {
-                println!("6");
             }
             NodeTypeId::Document(_)  => {
-                println!("6");
             }
             NodeTypeId::DocumentFragment  => {
-                println!("6");
             }
             NodeTypeId::DocumentType  => {
-                println!("6");
             }
         };
         false
@@ -496,6 +448,7 @@ impl ValidityStateMethods for ValidityState {
                             Some(input_value) => {
                                 let text_value: f32 = input_value.parse().unwrap();
                                 if text_value < min {
+                                    println!("Error - RangeUnderflow html input element");
                                     return true;
                                 }
                                 else {
@@ -503,7 +456,7 @@ impl ValidityStateMethods for ValidityState {
                                 }
                             },
                             None => {
-                                println!("No Error - No Value in html input element");
+                                println!("No RangeUnderflow Error - No Value in html input element");
                                 return false;
                             }
                         }
@@ -514,35 +467,22 @@ impl ValidityStateMethods for ValidityState {
                 }
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLButtonElement)) => {
-                //let element = self.downcast::<HTMLButtonElement>().unwrap();
-                println!("2");
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLObjectElement)) => {
-                //let element = self.downcast::<HTMLObjectElement>().unwrap();
-                println!("3");
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLSelectElement)) => {
-                //let element = self.downcast::<HTMLSelectElement>().unwrap();
-               println!("4");
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLTextAreaElement)) => {
-                //let element = self.downcast::<HTMLTextAreaElement>().unwrap();
-               println!("5");
             },
             NodeTypeId::Element(_)  => {
-                println!("6");
             }
             NodeTypeId::CharacterData(_)  => {
-                println!("6");
             }
             NodeTypeId::Document(_)  => {
-                println!("6");
             }
             NodeTypeId::DocumentFragment  => {
-                println!("6");
             }
             NodeTypeId::DocumentType  => {
-                println!("6");
             }
         };
         false
@@ -563,6 +503,7 @@ impl ValidityStateMethods for ValidityState {
                             Some(input_value) => {
                                 let text_value: f32 = input_value.parse().unwrap();
                                 if text_value > max {
+                                    println!("Error - RangeOverflow html input element");
                                     return true;
                                 }
                                 else {
@@ -570,7 +511,7 @@ impl ValidityStateMethods for ValidityState {
                                 }
                             },
                             None => {
-                                println!("No Error - No Value in html input element");
+                                println!("No RangeOverflow Error - No Value in html input element");
                                 return false;
                             }
                         }
@@ -581,35 +522,22 @@ impl ValidityStateMethods for ValidityState {
                 }
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLButtonElement)) => {
-                //let element = self.downcast::<HTMLButtonElement>().unwrap();
-                println!("2");
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLObjectElement)) => {
-                //let element = self.downcast::<HTMLObjectElement>().unwrap();
-                println!("3");
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLSelectElement)) => {
-                //let element = self.downcast::<HTMLSelectElement>().unwrap();
-               println!("4");
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLTextAreaElement)) => {
-                //let element = self.downcast::<HTMLTextAreaElement>().unwrap();
-               println!("5");
             },
             NodeTypeId::Element(_)  => {
-                println!("6");
             }
             NodeTypeId::CharacterData(_)  => {
-                println!("6");
             }
             NodeTypeId::Document(_)  => {
-                println!("6");
             }
             NodeTypeId::DocumentFragment  => {
-                println!("6");
             }
             NodeTypeId::DocumentType  => {
-                println!("6");
             }
         };
         false
@@ -633,11 +561,12 @@ impl ValidityStateMethods for ValidityState {
                                     return false;
                                 }
                                 else {
+                                    println!("Error - StepMismatch html input element");
                                     return true;
                                 }
                             },
                             None => {
-                                println!("No Error - No Value in html input element");
+                                println!("No StepMismatch Error - No Value in html input element");
                                 return false;
                             }
                         }
@@ -648,35 +577,22 @@ impl ValidityStateMethods for ValidityState {
                 }
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLButtonElement)) => {
-                //let element = self.downcast::<HTMLButtonElement>().unwrap();
-                println!("2");
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLObjectElement)) => {
-                //let element = self.downcast::<HTMLObjectElement>().unwrap();
-                println!("3");
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLSelectElement)) => {
-                //let element = self.downcast::<HTMLSelectElement>().unwrap();
-               println!("4");
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLTextAreaElement)) => {
-                //let element = self.downcast::<HTMLTextAreaElement>().unwrap();
-               println!("5");
             },
             NodeTypeId::Element(_)  => {
-                println!("6");
             }
             NodeTypeId::CharacterData(_)  => {
-                println!("6");
             }
             NodeTypeId::Document(_)  => {
-                println!("6");
             }
             NodeTypeId::DocumentFragment  => {
-                println!("6");
             }
             NodeTypeId::DocumentType  => {
-                println!("6");
             }
         };
         false
@@ -686,38 +602,24 @@ impl ValidityStateMethods for ValidityState {
     fn BadInput(&self) -> bool {
         let element = match self.element.upcast::<Node>().type_id() {
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLInputElement)) => {
-                println!("1");
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLButtonElement)) => {
-                //let element = self.downcast::<HTMLButtonElement>().unwrap();
-                println!("2");
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLObjectElement)) => {
-                //let element = self.downcast::<HTMLObjectElement>().unwrap();
-                println!("3");
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLSelectElement)) => {
-                //let element = self.downcast::<HTMLSelectElement>().unwrap();
-               println!("4");
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLTextAreaElement)) => {
-                //let element = self.downcast::<HTMLTextAreaElement>().unwrap();
-               println!("5");
             },
             NodeTypeId::Element(_)  => {
-                println!("6");
             }
             NodeTypeId::CharacterData(_)  => {
-                println!("6");
             }
             NodeTypeId::Document(_)  => {
-                println!("6");
             }
             NodeTypeId::DocumentFragment  => {
-                println!("6");
             }
             NodeTypeId::DocumentType  => {
-                println!("6");
             }
         };
         false
@@ -727,38 +629,24 @@ impl ValidityStateMethods for ValidityState {
     fn CustomError(&self) -> bool {
         let element = match self.element.upcast::<Node>().type_id() {
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLInputElement)) => {
-                println!("1");
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLButtonElement)) => {
-                //let element = self.downcast::<HTMLButtonElement>().unwrap();
-                println!("2");
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLObjectElement)) => {
-                //let element = self.downcast::<HTMLObjectElement>().unwrap();
-                println!("3");
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLSelectElement)) => {
-                //let element = self.downcast::<HTMLSelectElement>().unwrap();
-               println!("4");
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLTextAreaElement)) => {
-                //let element = self.downcast::<HTMLTextAreaElement>().unwrap();
-               println!("5");
             },
             NodeTypeId::Element(_)  => {
-                println!("6");
             }
             NodeTypeId::CharacterData(_)  => {
-                println!("6");
             }
             NodeTypeId::Document(_)  => {
-                println!("6");
             }
             NodeTypeId::DocumentFragment  => {
-                println!("6");
             }
             NodeTypeId::DocumentType  => {
-                println!("6");
             }
         };
         false
