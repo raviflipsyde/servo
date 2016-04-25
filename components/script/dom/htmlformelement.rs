@@ -384,7 +384,8 @@ impl HTMLFormElement {
             Ok(()) => return true,
             Err(err) => {
             println!("Error in form fields in CheckValdity"); 
-                return false }
+                return false 
+            }
         };
 
     }
@@ -414,7 +415,7 @@ impl HTMLFormElement {
             
             if let Some(_el) = field.downcast::<Element>() {
                 
-                if(self.check_if_candidate_for_validation(_el) & !self.check_if_candidate_satisfies_constraints(_el)) {
+                if self.check_if_candidate_for_validation(_el) & !self.check_if_candidate_satisfies_constraints(_el) {
 
                     match _el.upcast::<Node>().type_id() {
                         NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLInputElement)) => {

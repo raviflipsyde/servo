@@ -25,7 +25,7 @@ use dom::bindings::codegen::Bindings::HTMLOptionElementBinding::HTMLOptionElemen
 use dom::bindings::codegen::Bindings::HTMLTextAreaElementBinding::HTMLTextAreaElementMethods;
 use util::str::DOMString;
 use dom::bindings::codegen::Bindings::AttrBinding::AttrMethods;
-
+use regex::Regex;
 
 //use dom::htmlformelement::FormDatumGetter;
 // https://html.spec.whatwg.org/multipage/#validity-states
@@ -147,8 +147,6 @@ impl ValidityStateMethods for ValidityState {
                         return false;
                     }
                 }
-                
-                
             },
             NodeTypeId::Element(_)  => {
                 return false;
@@ -175,7 +173,41 @@ impl ValidityStateMethods for ValidityState {
     fn TypeMismatch(&self) -> bool {
         let element = match self.element.upcast::<Node>().type_id() {
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLInputElement)) => {
-                println!("1");     
+                static regex_email: Regex = Regex::new(r"/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/").unwrap();
+                static regex_url: Regex = Regex::new(r"").unwrap();
+                static regex_number: Regex = Regex::new(r"").unwrap();
+                let attr_value_check = self.element.get_attribute_by_name(DOMString::from("type")).map(|s| s.Value());
+                match attr_value_check {
+                    Some(attr_value) => {
+                        let html_input_element = self.element.downcast::<HTMLInputElement>().unwrap();
+                        let input_value_check = html_input_element.get_value_for_validation();
+                        match input_value_check {
+                            Some(input_value) => {
+                                if attr_value == "email"{
+                                    return !regex_email.is_match(&*input_value);
+                                }
+                                else if attr_value == "url" {
+                                    return !regex_url.is_match(&*input_value);
+                                }
+                                else if attr_value == "number" {
+                                    return !regex_number.is_match(&*input_value);
+                                }
+                                else{
+                                    return false;
+                                }
+                            },
+                            None => {
+                                println!("Error - Value missing in html input element");
+                                return true;
+                            }
+                        }                            
+                    },
+                    None => {
+                        return false;
+                    }
+                } 
+                
+                //let data = element1.form_datum(Some(FormSubmitter::InputElement(element1)));              
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLButtonElement)) => {
                 //let element = self.downcast::<HTMLButtonElement>().unwrap();
@@ -220,7 +252,26 @@ impl ValidityStateMethods for ValidityState {
     fn PatternMismatch(&self) -> bool {
         let element = match self.element.upcast::<Node>().type_id() {
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLInputElement)) => {
-                println!("1");     
+                let attr_value_check = self.element.get_attribute_by_name(DOMString::from("pattern")).map(|s| s.Value());
+                match attr_value_check {
+                    Some(attr_value) => {
+                        let regex = Regex::new(&*attr_value).unwrap();
+                        let html_input_element = self.element.downcast::<HTMLInputElement>().unwrap();
+                        let input_value_check = html_input_element.get_value_for_validation();
+                        match input_value_check {
+                            Some(input_value) => {
+                                return !regex.is_match(&*input_value);
+                            },
+                            None => {
+                                println!("No Error - No Value in html input element");
+                                return false;
+                            }
+                        }                            
+                    },
+                    None => {
+                        return false;
+                    }
+                }
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLButtonElement)) => {
                 //let element = self.downcast::<HTMLButtonElement>().unwrap();
@@ -264,7 +315,31 @@ impl ValidityStateMethods for ValidityState {
     fn TooLong(&self) -> bool {
         let element = match self.element.upcast::<Node>().type_id() {
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLInputElement)) => {
-                println!("1");     
+                let attr_value_check = self.element.get_attribute_by_name(DOMString::from("maxlength")).map(|s| s.Value());
+                match attr_value_check {
+                    Some(attr_value) => {
+                        let maxlength = attr_value.parse().unwrap();
+                        let html_input_element = self.element.downcast::<HTMLInputElement>().unwrap();
+                        let input_value_check = html_input_element.get_value_for_validation();
+                        match input_value_check {
+                            Some(input_value) => {
+                                if input_value.len() > maxlength {
+                                    return true;
+                                }
+                                else {
+                                    return false;
+                                }
+                            },
+                            None => {
+                                println!("No Error - No Value in html input element");
+                                return false;
+                            }
+                        }                            
+                    },
+                    None => {
+                        return false;
+                    }
+                }
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLButtonElement)) => {
                 //let element = self.downcast::<HTMLButtonElement>().unwrap();
@@ -281,8 +356,31 @@ impl ValidityStateMethods for ValidityState {
                println!("4");
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLTextAreaElement)) => {
-                //let element = self.downcast::<HTMLTextAreaElement>().unwrap();
-               println!("5");
+                let attr_value_check = self.element.get_attribute_by_name(DOMString::from("maxlength")).map(|s| s.Value());
+                match attr_value_check {
+                    Some(attr_value) => {
+                        let maxlength = attr_value.parse().unwrap();
+                        let html_textarea_element = self.element.downcast::<HTMLTextAreaElement>().unwrap();
+                        let input_value_check = html_textarea_element.get_value_for_validation();
+                        match input_value_check {
+                            Some(input_value) => {
+                             if input_value.len() > maxlength {
+                                    return true;
+                                }
+                                else {
+                                    return false;
+                                }
+                            },
+                            None => {
+                                println!("Error - Value missing in html text area element");
+                                return true;
+                            }
+                        }                            
+                    },
+                    None => {
+                        return false;
+                    }
+                }
             },
             NodeTypeId::Element(_)  => {
                 println!("6");
@@ -308,7 +406,31 @@ impl ValidityStateMethods for ValidityState {
     fn TooShort(&self) -> bool {
         let element = match self.element.upcast::<Node>().type_id() {
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLInputElement)) => {
-                println!("1");     
+                let attr_value_check = self.element.get_attribute_by_name(DOMString::from("minlength")).map(|s| s.Value());
+                match attr_value_check {
+                    Some(attr_value) => {
+                        let minlength = attr_value.parse().unwrap();
+                        let html_input_element = self.element.downcast::<HTMLInputElement>().unwrap();
+                        let input_value_check = html_input_element.get_value_for_validation();
+                        match input_value_check {
+                            Some(input_value) => {
+                                if input_value.len() < minlength {
+                                    return true;
+                                }
+                                else {
+                                    return false;
+                                }
+                            },
+                            None => {
+                                println!("No Error - No Value in html input element");
+                                return false;
+                            }
+                        }                            
+                    },
+                    None => {
+                        return false;
+                    }
+                }
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLButtonElement)) => {
                 //let element = self.downcast::<HTMLButtonElement>().unwrap();
@@ -325,8 +447,31 @@ impl ValidityStateMethods for ValidityState {
                println!("4");
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLTextAreaElement)) => {
-                //let element = self.downcast::<HTMLTextAreaElement>().unwrap();
-               println!("5");
+                let attr_value_check = self.element.get_attribute_by_name(DOMString::from("minlength")).map(|s| s.Value());
+                match attr_value_check {
+                    Some(attr_value) => {
+                        let minlength = attr_value.parse().unwrap();
+                        let html_textarea_element = self.element.downcast::<HTMLTextAreaElement>().unwrap();
+                        let input_value_check = html_textarea_element.get_value_for_validation();
+                        match input_value_check {
+                            Some(input_value) => {
+                             if input_value.len() < minlength {
+                                    return true;
+                                }
+                                else {
+                                    return false;
+                                }
+                            },
+                            None => {
+                                println!("Error - Value missing in html text area element");
+                                return true;
+                            }
+                        }                            
+                    },
+                    None => {
+                        return false;
+                    }
+                }
             },
             NodeTypeId::Element(_)  => {
                 println!("6");
@@ -352,7 +497,32 @@ impl ValidityStateMethods for ValidityState {
     fn RangeUnderflow(&self) -> bool {
         let element = match self.element.upcast::<Node>().type_id() {
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLInputElement)) => {
-                println!("1");     
+                let attr_value_check = self.element.get_attribute_by_name(DOMString::from("min")).map(|s| s.Value());
+                match attr_value_check {
+                    Some(attr_value) => {
+                        let min: f32 = attr_value.parse().unwrap();
+                        let html_input_element = self.element.downcast::<HTMLInputElement>().unwrap();
+                        let input_value_check = html_input_element.get_value_for_validation();
+                        match input_value_check {
+                            Some(input_value) => {
+                                let text_value: f32 = input_value.parse().unwrap();
+                                if text_value < min {
+                                    return true;
+                                }
+                                else {
+                                    return false;
+                                }
+                            },
+                            None => {
+                                println!("No Error - No Value in html input element");
+                                return false;
+                            }
+                        }                            
+                    },
+                    None => {
+                        return false;
+                    }
+                }
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLButtonElement)) => {
                 //let element = self.downcast::<HTMLButtonElement>().unwrap();
@@ -396,7 +566,32 @@ impl ValidityStateMethods for ValidityState {
     fn RangeOverflow(&self) -> bool {
         let element = match self.element.upcast::<Node>().type_id() {
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLInputElement)) => {
-                println!("1");     
+                let attr_value_check = self.element.get_attribute_by_name(DOMString::from("max")).map(|s| s.Value());
+                match attr_value_check {
+                    Some(attr_value) => {
+                        let max: f32 = attr_value.parse().unwrap();
+                        let html_input_element = self.element.downcast::<HTMLInputElement>().unwrap();
+                        let input_value_check = html_input_element.get_value_for_validation();
+                        match input_value_check {
+                            Some(input_value) => {
+                                let text_value: f32 = input_value.parse().unwrap();
+                                if text_value > max {
+                                    return true;
+                                }
+                                else {
+                                    return false;
+                                }
+                            },
+                            None => {
+                                println!("No Error - No Value in html input element");
+                                return false;
+                            }
+                        }                            
+                    },
+                    None => {
+                        return false;
+                    }
+                }
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLButtonElement)) => {
                 //let element = self.downcast::<HTMLButtonElement>().unwrap();
@@ -440,7 +635,32 @@ impl ValidityStateMethods for ValidityState {
     fn StepMismatch(&self) -> bool {
         let element = match self.element.upcast::<Node>().type_id() {
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLInputElement)) => {
-                println!("1");     
+                let attr_value_check = self.element.get_attribute_by_name(DOMString::from("step")).map(|s| s.Value());
+                match attr_value_check {
+                    Some(attr_value) => {
+                        let step: f32 = attr_value.parse().unwrap();
+                        let html_input_element = self.element.downcast::<HTMLInputElement>().unwrap();
+                        let input_value_check = html_input_element.get_value_for_validation();
+                        match input_value_check {
+                            Some(input_value) => {
+                                let text_value: f32 = input_value.parse().unwrap();
+                                if text_value % step == 0.0_f32 {
+                                    return false;
+                                }
+                                else {
+                                    return true;
+                                }
+                            },
+                            None => {
+                                println!("No Error - No Value in html input element");
+                                return false;
+                            }
+                        }                            
+                    },
+                    None => {
+                        return false;
+                    }
+                }
             },
             NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLButtonElement)) => {
                 //let element = self.downcast::<HTMLButtonElement>().unwrap();
@@ -570,6 +790,6 @@ impl ValidityStateMethods for ValidityState {
 
     // https://html.spec.whatwg.org/multipage/#dom-validitystate-valid
     fn Valid(&self) -> bool {        
-        return !self.ValueMissing();
+        return !(self.ValueMissing()|self.TypeMismatch()|self.PatternMismatch()|self.TooLong()|self.TooShort()|self.RangeUnderflow()|self.RangeOverflow()|self.StepMismatch()|self.BadInput()|self.CustomError());
     }
 }
