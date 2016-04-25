@@ -208,7 +208,6 @@ impl Validatable for HTMLButtonElement {
     fn get_value_for_validation(&self) -> Option<DOMString>{
         None
     }
-    
 }
 
 impl Activatable for HTMLButtonElement {

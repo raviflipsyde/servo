@@ -235,7 +235,6 @@ impl VirtualMethods for HTMLSelectElement {
         }
     }
     fn handle_event(&self, event: &Event) {
-        
         if let Some(s) = self.super_type() {
             s.handle_event(event);
         }
@@ -246,13 +245,11 @@ impl VirtualMethods for HTMLSelectElement {
             //TODO: set the editing position for text inputs
 
             document_from_node(self).request_focus(self.upcast());
-        } else if event.type_() == atom!("invalid") && !event.DefaultPrevented(){
-                 
-                 document_from_node(self).request_focus(self.upcast());
-                
-                println!("Handle Error in htmlinput element");
+        } else if event.type_() == atom!("invalid") && !event.DefaultPrevented() {
+            document_from_node(self).request_focus(self.upcast());
+            println!("Handle Error in htmlinput element");
         }
-}
+    }
 }
 
 impl FormControl for HTMLSelectElement {}

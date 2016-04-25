@@ -96,7 +96,6 @@ impl Validatable for HTMLObjectElement {
     fn get_value_for_validation(&self) -> Option<DOMString>{
         None
     }
-    
 }
 impl VirtualMethods for HTMLObjectElement {
     fn super_type(&self) -> Option<&VirtualMethods> {

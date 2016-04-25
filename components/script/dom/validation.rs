@@ -4,6 +4,5 @@
 use util::str::DOMString;
 
 pub trait Validatable {
-	//fn get_attribute_value(&self, input_attr_name:&str) -> Option<&str>;
-	fn get_value_for_validation(&self) -> Option<DOMString>;
+    fn get_value_for_validation(&self) -> Option<DOMString>;
 }

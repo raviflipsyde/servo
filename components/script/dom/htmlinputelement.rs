@@ -1,7 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-
 use caseless::compatibility_caseless_match_str;
 use dom::activation::{Activatable, ActivationSource, synthetic_click_activation};
 use dom::attr::{Attr, AttrValue};
@@ -44,7 +43,6 @@ use textinput::KeyReaction::{DispatchInput, Nothing, RedrawSelection, TriggerDef
 use textinput::Lines::Single;
 use textinput::{TextInput, SelectionDirection};
 use util::str::{DOMString, search_index};
-
 const DEFAULT_SUBMIT_VALUE: &'static str = "Submit";
 const DEFAULT_RESET_VALUE: &'static str = "Reset";
 
@@ -85,7 +83,6 @@ pub struct HTMLInputElement {
     activation_state: DOMRefCell<InputActivationState>,
     // https://html.spec.whatwg.org/multipage/#concept-input-value-dirty-flag
     value_dirty: Cell<bool>,
-
     // TODO: selected files for file input
 }
 
@@ -118,7 +115,6 @@ impl InputActivationState {
 
 static DEFAULT_INPUT_SIZE: u32 = 20;
 static DEFAULT_MAX_LENGTH: i32 = -1;
-
 impl HTMLInputElement {
     fn new_inherited(localName: Atom, prefix: Option<DOMString>, document: &Document) -> HTMLInputElement {
         let chan = document.window().constellation_chan();
@@ -137,7 +133,6 @@ impl HTMLInputElement {
             value_dirty: Cell::new(false),
         }
     }
-
     #[allow(unrooted_must_root)]
     pub fn new(localName: Atom,
                prefix: Option<DOMString>,
@@ -145,13 +140,11 @@ impl HTMLInputElement {
         let element = HTMLInputElement::new_inherited(localName, prefix, document);
         Node::reflect_node(box element, document, HTMLInputElementBinding::Wrap)
     }
-
     pub fn type_(&self) -> Atom {
         self.upcast::<Element>()
             .get_attribute(&ns!(), &atom!("type"))
             .map_or_else(|| atom!(""), |a| a.value().as_atom().to_owned())
     }
-
     // https://html.spec.whatwg.org/multipage/#input-type-attr-summary
     fn value_mode(&self) -> ValueMode {
         match self.input_type.get() {
@@ -197,7 +190,6 @@ impl LayoutHTMLInputElementHelpers for LayoutJS<HTMLInputElement> {
                 .unwrap_or(default);
             String::from(value)
         }
-
         match (*self.unsafe_get()).input_type.get() {
             InputType::InputCheckbox | InputType::InputRadio => String::new(),
             InputType::InputFile | InputType::InputImage => String::new(),
@@ -224,20 +216,17 @@ impl LayoutHTMLInputElementHelpers for LayoutJS<HTMLInputElement> {
             },
         }
     }
-
     #[allow(unrooted_must_root)]
     #[allow(unsafe_code)]
     unsafe fn size_for_layout(self) -> u32 {
         (*self.unsafe_get()).size.get()
     }
-
     #[allow(unrooted_must_root)]
     #[allow(unsafe_code)]
     unsafe fn selection_for_layout(self) -> Option<Range<isize>> {
         if !(*self.unsafe_get()).upcast::<Element>().focus_state() {
             return None;
         }
-
         // Use the raw textinput to get the index as long as we use a 1:1 char mapping
         // in value_for_layout.
         let raw = match (*self.unsafe_get()).input_type.get() {
@@ -252,13 +241,11 @@ impl LayoutHTMLInputElementHelpers for LayoutJS<HTMLInputElement> {
         let length = search_index(selection.length(), raw[begin_byte..].char_indices());
         Some(Range::new(begin, length))
     }
-
     #[allow(unrooted_must_root)]
     #[allow(unsafe_code)]
     unsafe fn checked_state_for_layout(self) -> bool {
         self.upcast::<Element>().get_state_for_layout().contains(IN_CHECKED_STATE)
     }
-
     #[allow(unrooted_must_root)]
     #[allow(unsafe_code)]
     unsafe fn indeterminate_state_for_layout(self) -> bool {
@@ -267,64 +254,46 @@ impl LayoutHTMLInputElementHelpers for LayoutJS<HTMLInputElement> {
 }
 
 impl HTMLInputElementMethods for HTMLInputElement {
-
     // https://html.spec.whatwg.org/multipage/#attr-input-accept
     make_getter!(Accept, "accept");
-
     // https://html.spec.whatwg.org/multipage/#attr-input-accept
     make_setter!(SetAccept, "accept");
-
     // https://html.spec.whatwg.org/multipage/#attr-input-alt
     make_getter!(Alt, "alt");
-
     // https://html.spec.whatwg.org/multipage/#attr-input-alt
     make_setter!(SetAlt, "alt");
-
     // https://html.spec.whatwg.org/multipage/#attr-input-dirName
     make_getter!(DirName, "dirname");
-
     // https://html.spec.whatwg.org/multipage/#attr-input-dirName
     make_setter!(SetDirName, "dirname");
-
     // https://html.spec.whatwg.org/multipage/#dom-fe-disabled
     make_bool_getter!(Disabled, "disabled");
-
     // https://html.spec.whatwg.org/multipage/#dom-fe-disabled
     make_bool_setter!(SetDisabled, "disabled");
-
     // https://html.spec.whatwg.org/multipage/#dom-fae-form
     fn GetForm(&self) -> Option<Root<HTMLFormElement>> {
         self.form_owner()
     }
-
     // https://html.spec.whatwg.org/multipage/#dom-input-defaultchecked
     make_bool_getter!(DefaultChecked, "checked");
-
     // https://html.spec.whatwg.org/multipage/#dom-input-defaultchecked
     make_bool_setter!(SetDefaultChecked, "checked");
-
     // https://html.spec.whatwg.org/multipage/#dom-input-checked
     fn Checked(&self) -> bool {
         self.upcast::<Element>().state().contains(IN_CHECKED_STATE)
     }
-
     // https://html.spec.whatwg.org/multipage/#dom-input-checked
     fn SetChecked(&self, checked: bool) {
         self.update_checked_state(checked, true);
     }
-
     // https://html.spec.whatwg.org/multipage/#dom-input-readonly
     make_bool_getter!(ReadOnly, "readonly");
-
     // https://html.spec.whatwg.org/multipage/#dom-input-readonly
     make_bool_setter!(SetReadOnly, "readonly");
-
     // https://html.spec.whatwg.org/multipage/#dom-input-size
     make_uint_getter!(Size, "size", DEFAULT_INPUT_SIZE);
-
     // https://html.spec.whatwg.org/multipage/#dom-input-size
     make_limited_uint_setter!(SetSize, "size", DEFAULT_INPUT_SIZE);
-
     // https://html.spec.whatwg.org/multipage/#dom-input-type
     make_enumerated_getter!(Type,
                             "type",
@@ -336,10 +305,8 @@ impl HTMLInputElementMethods for HTMLInputElement {
                             ("number") | ("range") | ("color") |
                             ("checkbox") | ("radio") | ("file") |
                             ("submit") | ("image") | ("reset") | ("button"));
-
     // https://html.spec.whatwg.org/multipage/#dom-input-type
     make_atomic_setter!(SetType, "type");
-
     // https://html.spec.whatwg.org/multipage/#dom-input-value
     fn Value(&self) -> DOMString {
         match self.value_mode() {
@@ -362,7 +329,6 @@ impl HTMLInputElementMethods for HTMLInputElement {
             }
         }
     }
-
     // https://html.spec.whatwg.org/multipage/#dom-input-value
     fn SetValue(&self, value: DOMString) -> ErrorResult {
         match self.value_mode() {
@@ -382,121 +348,85 @@ impl HTMLInputElementMethods for HTMLInputElement {
                 }
             }
         }
-
         self.value_changed.set(true);
         self.upcast::<Node>().dirty(NodeDamage::OtherNodeDamage);
         Ok(())
     }
-
     // https://html.spec.whatwg.org/multipage/#dom-input-defaultvalue
     make_getter!(DefaultValue, "value");
-
     // https://html.spec.whatwg.org/multipage/#dom-input-defaultvalue
     make_setter!(SetDefaultValue, "value");
-
     // https://html.spec.whatwg.org/multipage/#attr-fe-name
     make_getter!(Name, "name");
-
     // https://html.spec.whatwg.org/multipage/#attr-fe-name
     make_atomic_setter!(SetName, "name");
-
     // https://html.spec.whatwg.org/multipage/#attr-input-placeholder
     make_getter!(Placeholder, "placeholder");
-
     // https://html.spec.whatwg.org/multipage/#attr-input-placeholder
     make_setter!(SetPlaceholder, "placeholder");
-
     // https://html.spec.whatwg.org/multipage/#dom-input-formaction
     make_url_or_base_getter!(FormAction, "formaction");
-
     // https://html.spec.whatwg.org/multipage/#dom-input-formaction
     make_setter!(SetFormAction, "formaction");
-
     // https://html.spec.whatwg.org/multipage/#dom-input-formenctype
     make_enumerated_getter!(FormEnctype,
                             "formenctype",
                             "application/x-www-form-urlencoded",
                             ("text/plain") | ("multipart/form-data"));
-
     // https://html.spec.whatwg.org/multipage/#dom-input-formenctype
     make_setter!(SetFormEnctype, "formenctype");
-
     // https://html.spec.whatwg.org/multipage/#dom-input-formmethod
     make_enumerated_getter!(FormMethod, "formmethod", "get", ("post") | ("dialog"));
-
     // https://html.spec.whatwg.org/multipage/#dom-input-formmethod
     make_setter!(SetFormMethod, "formmethod");
-
     // https://html.spec.whatwg.org/multipage/#dom-input-formtarget
     make_getter!(FormTarget, "formtarget");
-
     // https://html.spec.whatwg.org/multipage/#dom-input-formtarget
     make_setter!(SetFormTarget, "formtarget");
-
     // https://html.spec.whatwg.org/multipage/#attr-fs-formnovalidate
     make_bool_getter!(FormNoValidate, "formnovalidate");
-
     // https://html.spec.whatwg.org/multipage/#attr-fs-formnovalidate
     make_bool_setter!(SetFormNoValidate, "formnovalidate");
-
     // https://html.spec.whatwg.org/multipage/#attr-input-max
     make_getter!(Max, "max");
-
     // https://html.spec.whatwg.org/multipage/#attr-input-max
     make_setter!(SetMax, "max");
-
     // https://html.spec.whatwg.org/multipage/#dom-input-maxlength
     make_int_getter!(MaxLength, "maxlength", DEFAULT_MAX_LENGTH);
-
     // https://html.spec.whatwg.org/multipage/#dom-input-maxlength
     make_limited_int_setter!(SetMaxLength, "maxlength", DEFAULT_MAX_LENGTH);
-
     // https://html.spec.whatwg.org/multipage/#attr-input-min
     make_getter!(Min, "min");
-
     // https://html.spec.whatwg.org/multipage/#attr-input-min
     make_setter!(SetMin, "min");
-
     // https://html.spec.whatwg.org/multipage/#attr-input-multiple
     make_bool_getter!(Multiple, "multiple");
-
     // https://html.spec.whatwg.org/multipage/#attr-input-multiple
     make_bool_setter!(SetMultiple, "multiple");
-
     // https://html.spec.whatwg.org/multipage/#attr-input-pattern
     make_getter!(Pattern, "pattern");
-
     // https://html.spec.whatwg.org/multipage/#attr-input-pattern
     make_setter!(SetPattern, "pattern");
-
     // https://html.spec.whatwg.org/multipage/#attr-input-required
     make_bool_getter!(Required, "required");
-
     // https://html.spec.whatwg.org/multipage/#attr-input-required
     make_bool_setter!(SetRequired, "required");
-
     // https://html.spec.whatwg.org/multipage/#attr-input-src
     make_getter!(Src, "src");
-
     // https://html.spec.whatwg.org/multipage/#attr-input-src
     make_setter!(SetSrc, "src");
-
     // https://html.spec.whatwg.org/multipage/#attr-input-step
     make_getter!(Step, "step");
-
     // https://html.spec.whatwg.org/multipage/#attr-input-step
     make_setter!(SetStep, "step");
-
     // https://html.spec.whatwg.org/multipage/#dom-input-indeterminate
     fn Indeterminate(&self) -> bool {
         self.upcast::<Element>().state().contains(IN_INDETERMINATE_STATE)
     }
-
     // https://html.spec.whatwg.org/multipage/#dom-input-indeterminate
     fn SetIndeterminate(&self, val: bool) {
         self.upcast::<Element>().set_state(IN_INDETERMINATE_STATE, val)
     }
-
     // https://html.spec.whatwg.org/multipage/#dom-lfe-labels
     fn Labels(&self) -> Root<NodeList> {
         if self.type_() == atom!("hidden") {
@@ -506,41 +436,34 @@ impl HTMLInputElementMethods for HTMLInputElement {
             self.upcast::<HTMLElement>().labels()
         }
     }
-
     // https://html.spec.whatwg.org/multipage/#dom-input-selectionstart
     fn SelectionStart(&self) -> u32 {
         self.textinput.borrow().get_selection_start()
     }
-
     // https://html.spec.whatwg.org/multipage/#dom-textarea/input-selectionstart
     fn SetSelectionStart(&self, start: u32) {
         let selection_end = self.SelectionEnd();
         self.textinput.borrow_mut().set_selection_range(start, selection_end);
         self.upcast::<Node>().dirty(NodeDamage::OtherNodeDamage);
     }
-
     // https://html.spec.whatwg.org/multipage/#dom-textarea/input-selectionend
     fn SelectionEnd(&self) -> u32 {
         self.textinput.borrow().get_absolute_insertion_point() as u32
     }
-
     // https://html.spec.whatwg.org/multipage/#dom-textarea/input-selectionend
     fn SetSelectionEnd(&self, end: u32) {
         let selection_start = self.SelectionStart();
         self.textinput.borrow_mut().set_selection_range(selection_start, end);
         self.upcast::<Node>().dirty(NodeDamage::OtherNodeDamage);
     }
-
     // https://html.spec.whatwg.org/multipage/#dom-textarea/input-selectiondirection
     fn SelectionDirection(&self) -> DOMString {
         DOMString::from(self.textinput.borrow().selection_direction)
     }
-
     // https://html.spec.whatwg.org/multipage/#dom-textarea/input-selectiondirection
     fn SetSelectionDirection(&self, direction: DOMString) {
         self.textinput.borrow_mut().selection_direction = SelectionDirection::from(direction);
     }
-
     // https://html.spec.whatwg.org/multipage/#dom-textarea/input-setselectionrange
     fn SetSelectionRange(&self, start: u32, end: u32, direction: Option<DOMString>) {
         let direction = direction.map_or(SelectionDirection::None, |d| SelectionDirection::from(d));
@@ -549,7 +472,6 @@ impl HTMLInputElementMethods for HTMLInputElement {
         self.upcast::<Node>().dirty(NodeDamage::OtherNodeDamage);
     }
 }
-
 
 #[allow(unsafe_code)]
 fn broadcast_radio_checked(broadcaster: &HTMLInputElement, group: Option<&Atom>) {
@@ -561,11 +483,9 @@ fn broadcast_radio_checked(broadcaster: &HTMLInputElement, group: Option<&Atom>)
         },
         _ => {},
     }
-
     //TODO: if not in document, use root ancestor instead of document
     let owner = broadcaster.form_owner();
     let doc = document_from_node(broadcaster);
-
     // This function is a workaround for lifetime constraint difficulties.
     fn do_broadcast(doc_node: &Node, broadcaster: &HTMLInputElement,
                         owner: Option<&HTMLFormElement>, group: Option<&Atom>) {
@@ -578,7 +498,6 @@ fn broadcast_radio_checked(broadcaster: &HTMLInputElement, group: Option<&Atom>)
             }
         }
     }
-
     do_broadcast(doc.upcast(), broadcaster, owner.r(), group)
 }
 
@@ -600,7 +519,6 @@ impl HTMLInputElement {
             broadcast_radio_checked(self, group);
         }
     }
-
     /// https://html.spec.whatwg.org/multipage/#constructing-the-form-data-set
     /// Steps range from 3.1 to 3.7 which related to the HTMLInputElement
     pub fn form_datum(&self, submitter: Option<FormSubmitter>) -> Option<FormDatum> {
@@ -614,7 +532,6 @@ impl HTMLInputElement {
             },
             _ => false
         };
-
         match ty {
             // Step 3.1: it's a button but it is not submitter.
             atom!("submit") | atom!("button") | atom!("reset") if !is_submitter => return None,
@@ -627,9 +544,7 @@ impl HTMLInputElement {
             _ => if name.is_empty() {
                 return None;
             }
-
         }
-
         // Step 3.6
         Some(FormDatum {
             ty: DOMString::from(&*ty), // FIXME(ajeffrey): Convert directly from Atoms to DOMStrings
@@ -637,7 +552,6 @@ impl HTMLInputElement {
             value: self.Value()
         })
     }
-
     // https://html.spec.whatwg.org/multipage/#radio-button-group
     fn radio_group_name(&self) -> Option<Atom> {
         //TODO: determine form owner
@@ -645,30 +559,24 @@ impl HTMLInputElement {
             .get_attribute(&ns!(), &atom!("name"))
             .map(|name| name.value().as_atom().clone())
     }
-
     fn update_checked_state(&self, checked: bool, dirty: bool) {
         self.upcast::<Element>().set_state(IN_CHECKED_STATE, checked);
-
         if dirty {
             self.checked_changed.set(true);
         }
-
         if self.input_type.get() == InputType::InputRadio && checked {
             broadcast_radio_checked(self,
                                     self.radio_group_name().as_ref());
         }
-
         self.upcast::<Node>().dirty(NodeDamage::OtherNodeDamage);
         //TODO: dispatch change event
     }
-
     // https://html.spec.whatwg.org/multipage/#concept-fe-mutable
     fn is_mutable(&self) -> bool {
         // https://html.spec.whatwg.org/multipage/#the-input-element:concept-fe-mutable
         // https://html.spec.whatwg.org/multipage/#the-readonly-attribute:concept-fe-mutable
         !(self.upcast::<Element>().disabled_state() || self.ReadOnly())
     }
-
     // https://html.spec.whatwg.org/multipage/#the-input-element:concept-form-reset-control
     pub fn reset(&self) {
         match self.input_type.get() {
@@ -679,7 +587,6 @@ impl HTMLInputElement {
             InputType::InputImage => (),
             _ => ()
         }
-
         self.SetValue(self.DefaultValue())
             .expect("Failed to reset input value to default.");
         self.value_dirty.set(false);
@@ -692,10 +599,8 @@ impl VirtualMethods for HTMLInputElement {
     fn super_type(&self) -> Option<&VirtualMethods> {
         Some(self.upcast::<HTMLElement>() as &VirtualMethods)
     }
-
     fn attribute_mutated(&self, attr: &Attr, mutation: AttributeMutation) {
         self.super_type().unwrap().attribute_mutated(attr, mutation);
-
         match attr.local_name() {
             &atom!("disabled") => {
                 let disabled_state = match mutation {
@@ -741,21 +646,17 @@ impl VirtualMethods for HTMLInputElement {
                             &atom!("password") => InputType::InputPassword,
                             _ => InputType::InputText,
                         };
-
                         // https://html.spec.whatwg.org/multipage/#input-type-change
                         let (old_value_mode, old_idl_value) = (self.value_mode(), self.Value());
                         self.input_type.set(new_type);
                         let new_value_mode = self.value_mode();
-
                         match (&old_value_mode, old_idl_value.is_empty(), new_value_mode) {
-
                             // Step 1
                             (&ValueMode::Value, false, ValueMode::Default) |
                             (&ValueMode::Value, false, ValueMode::DefaultOn) => {
                                 self.SetValue(old_idl_value)
                                     .expect("Failed to set input value on type change to a default ValueMode.");
                             }
-
                             // Step 2
                             (_, _, ValueMode::Value) if old_value_mode != ValueMode::Value => {
                                 self.SetValue(self.upcast::<Element>()
@@ -765,7 +666,6 @@ impl VirtualMethods for HTMLInputElement {
                                     .expect("Failed to set input value on type change to ValueMode::Value.");
                                 self.value_dirty.set(false);
                             }
-
                             // Step 3
                             (_, _, ValueMode::Filename) if old_value_mode != ValueMode::Filename => {
                                 self.SetValue(DOMString::from(""))
@@ -773,13 +673,11 @@ impl VirtualMethods for HTMLInputElement {
                             }
                             _ => {}
                         }
-
                         // Step 5
                         if new_type == InputType::InputRadio {
                             self.radio_group_updated(
                                 self.radio_group_name().as_ref());
                         }
-
                         // TODO: Step 6 - value sanitization
                     },
                     AttributeMutation::Removed => {
@@ -825,7 +723,6 @@ impl VirtualMethods for HTMLInputElement {
             _ => {},
         }
     }
-
     fn parse_plain_attribute(&self, name: &Atom, value: DOMString) -> AttrValue {
         match name {
             &atom!("name") => AttrValue::from_atomic(value),
@@ -835,18 +732,14 @@ impl VirtualMethods for HTMLInputElement {
             _ => self.super_type().unwrap().parse_plain_attribute(name, value),
         }
     }
-
     fn bind_to_tree(&self, tree_in_doc: bool) {
         if let Some(ref s) = self.super_type() {
             s.bind_to_tree(tree_in_doc);
         }
-
         self.upcast::<Element>().check_ancestors_disabled_state_for_form_control();
     }
-
     fn unbind_from_tree(&self, context: &UnbindContext) {
         self.super_type().unwrap().unbind_from_tree(context);
-
         let node = self.upcast::<Node>();
         let el = self.upcast::<Element>();
         if node.ancestors().any(|ancestor| ancestor.is::<HTMLFieldSetElement>()) {
@@ -855,20 +748,14 @@ impl VirtualMethods for HTMLInputElement {
             el.check_disabled_attribute();
         }
     }
-
     fn handle_event(&self, event: &Event) {
-        
         if let Some(s) = self.super_type() {
             s.handle_event(event);
         }
-
-
         if event.type_() == atom!("click") && !event.DefaultPrevented() {
             // TODO: Dispatch events for non activatable inputs
             // https://html.spec.whatwg.org/multipage/#common-input-element-events
-
             //TODO: set the editing position for text inputs
-
             document_from_node(self).request_focus(self.upcast());
         } else if event.type_() == atom!("keydown") && !event.DefaultPrevented() &&
             (self.input_type.get() == InputType::InputText ||
@@ -886,11 +773,9 @@ impl VirtualMethods for HTMLInputElement {
                         },
                         DispatchInput => {
                             self.value_changed.set(true);
-
                             if event.IsTrusted() {
                                 ChangeEventRunnable::send(self.upcast::<Node>());
                             }
-
                             self.upcast::<Node>().dirty(NodeDamage::OtherNodeDamage);
                             event.PreventDefault();
                         }
@@ -901,21 +786,15 @@ impl VirtualMethods for HTMLInputElement {
                         Nothing => (),
                     }
                 }
-        
-        } else if event.type_() == atom!("invalid") && !event.DefaultPrevented(){
-                 
+        } else if event.type_() == atom!("invalid") && !event.DefaultPrevented() {
                  document_from_node(self).request_focus(self.upcast());
-                
                 println!("Handle Error in htmlinput element");
         }
-        
     }
 }
 
 impl FormControl for HTMLInputElement {}
-
 impl Validatable for HTMLInputElement {
-
     fn get_value_for_validation(&self) -> Option<DOMString>{
         if self.Value().is_empty() {
             None
@@ -923,14 +802,12 @@ impl Validatable for HTMLInputElement {
             Some(self.Value())
         }
     }
- 
 }
 
 impl Activatable for HTMLInputElement {
     fn as_element(&self) -> &Element {
         self.upcast()
     }
-
     fn is_instance_activatable(&self) -> bool {
         match self.input_type.get() {
             // https://html.spec.whatwg.org/multipage/#submit-button-state-%28type=submit%29:activation-behaviour-2
@@ -942,7 +819,6 @@ impl Activatable for HTMLInputElement {
             _ => false
         }
     }
-
     // https://html.spec.whatwg.org/multipage/#run-pre-click-activation-steps
     #[allow(unsafe_code)]
     fn pre_click_activation(&self) {
@@ -975,7 +851,6 @@ impl Activatable for HTMLInputElement {
                     let doc = document_from_node(self);
                     let doc_node = doc.upcast::<Node>();
                     let group = self.radio_group_name();;
-
                     // Safe since we only manipulate the DOM tree after finding an element
                     let checked_member = doc_node.query_selector_iter(DOMString::from("input[type=radio]"))
                             .unwrap()
@@ -992,7 +867,6 @@ impl Activatable for HTMLInputElement {
             }
         }
     }
-
     // https://html.spec.whatwg.org/multipage/#run-canceled-activation-steps
     fn canceled_activation(&self) {
         let cache = self.activation_state.borrow();
@@ -1038,7 +912,6 @@ impl Activatable for HTMLInputElement {
             _ => ()
         }
     }
-
     // https://html.spec.whatwg.org/multipage/#run-post-click-activation-steps
     fn activation_behavior(&self, _event: &Event, _target: &EventTarget) {
         let ty = self.input_type.get();
@@ -1080,7 +953,6 @@ impl Activatable for HTMLInputElement {
             _ => ()
         }
     }
-
     // https://html.spec.whatwg.org/multipage/#implicit-submission
     #[allow(unsafe_code)]
     fn implicit_submission(&self, ctrlKey: bool, shiftKey: bool, altKey: bool, metaKey: bool) {
@@ -1091,7 +963,6 @@ impl Activatable for HTMLInputElement {
             None => return,
             Some(ref f) => f
         };
-
         if self.upcast::<Element>().click_in_progress() {
             return;
         }
@@ -1123,7 +994,6 @@ impl Activatable for HTMLInputElement {
                             _ => false
                         }
                     });
-
                 if inputs.skip(1).next().is_some() {
                     // lazily test for > 1 submission-blocking inputs
                     return;
