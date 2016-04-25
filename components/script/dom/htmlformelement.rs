@@ -1,6 +1,7 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 use dom::attr::AttrValue;
 use dom::bindings::codegen::Bindings::DocumentBinding::DocumentMethods;
 use dom::bindings::codegen::Bindings::EventBinding::EventMethods;
@@ -50,6 +51,7 @@ use util::str::DOMString;
 
 #[derive(JSTraceable, PartialEq, Clone, Copy, HeapSizeOf)]
 pub struct GenerationId(u32);
+
 #[dom_struct]
 pub struct HTMLFormElement {
     htmlelement: HTMLElement,
@@ -76,6 +78,7 @@ impl HTMLFormElement {
         let element = HTMLFormElement::new_inherited(localName, prefix, document);
         Node::reflect_node(box element, document, HTMLFormElementBinding::Wrap)
     }
+
     pub fn generation_id(&self) -> GenerationId {
         self.generation_id.get()
     }
@@ -84,10 +87,13 @@ impl HTMLFormElement {
 impl HTMLFormElementMethods for HTMLFormElement {
     // https://html.spec.whatwg.org/multipage/#dom-form-acceptcharset
     make_getter!(AcceptCharset, "accept-charset");
+
     // https://html.spec.whatwg.org/multipage/#dom-form-acceptcharset
     make_setter!(SetAcceptCharset, "accept-charset");
+
     // https://html.spec.whatwg.org/multipage/#dom-fs-action
     make_url_or_base_getter!(Action, "action");
+
     // https://html.spec.whatwg.org/multipage/#dom-fs-action
     make_setter!(SetAction, "action");
     // https://html.spec.whatwg.org/multipage/#dom-form-autocomplete
@@ -366,7 +372,9 @@ impl HTMLFormElement {
         // Step 1-3
         let invalid_controls = node.traverse_preorder().filter_map(|field| {
             if let Some(_el) = field.downcast::<Element>() {
+                
                 if self.check_if_candidate_for_validation(_el) & !self.check_if_candidate_satisfies_constraints(_el) {
+
                     match _el.upcast::<Node>().type_id() {
                         NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLInputElement)) => {
                             return Some(FormSubmittableElement::InputElement(
