@@ -177,20 +177,28 @@ impl ValidityStateMethods for ValidityState {
                         match input_value_check {
                             Some(input_value) => {
                                 if attr_value == "email"{
-                                    return !regex_email.is_match(&*input_value);
+                                    if !regex_email.is_match(&*input_value) {
+                                        println!("Type error in html text input [email]");
+                                        return true;
+                                    }
                                 }
                                 else if attr_value == "url" {
-                                    return !regex_url.is_match(&*input_value);
+                                    if !regex_url.is_match(&*input_value) {
+                                        println!("Type error in html text input [url]");
+                                        return true;
+                                    }
                                 }
                                 else if attr_value == "number" {
-                                    return !regex_number.is_match(&*input_value);
+                                    if !regex_number.is_match(&*input_value) {
+                                        println!("Type error in html text input [number]");
+                                        return true;
+                                    }
                                 }
                                 else {
                                     return false;
                                 }
                             },
                             None => {
-                                println!("No Type Error - No Value in html input element");
                                 return false;
                             }
                         }
@@ -236,10 +244,12 @@ impl ValidityStateMethods for ValidityState {
                         let input_value_check = html_input_element.get_value_for_validation();
                         match input_value_check {
                             Some(input_value) => {
-                                return !regex.is_match(&*input_value);
+                                if !regex.is_match(&*input_value) {
+                                    println!("PatternMismatch error in html text input");
+                                    return true;
+                                }
                             },
                             None => {
-                                println!("No Pattern Error - No Value in html input element");
                                 return false;
                             }
                         }
@@ -293,7 +303,6 @@ impl ValidityStateMethods for ValidityState {
                                 }
                             },
                             None => {
-                                println!("No Too Long Error - No Value in html input element");
                                 return false;
                             }
                         }
@@ -328,7 +337,6 @@ impl ValidityStateMethods for ValidityState {
                                 }
                             },
                             None => {
-                                println!("No Too Long Error - Value missing in html text area element");
                                 return false;
                             }
                         }
@@ -374,7 +382,6 @@ impl ValidityStateMethods for ValidityState {
                                 }
                             },
                             None => {
-                                println!("No TooShort Error - No Value in html input element");
                                 return false;
                             }
                         }
@@ -409,7 +416,6 @@ impl ValidityStateMethods for ValidityState {
                                 }
                             },
                             None => {
-                                println!("No TooShort Error - Value missing in html text area element");
                                 return false;
                             }
                         }
@@ -456,7 +462,6 @@ impl ValidityStateMethods for ValidityState {
                                 }
                             },
                             None => {
-                                println!("No RangeUnderflow Error - No Value in html input element");
                                 return false;
                             }
                         }
@@ -511,7 +516,6 @@ impl ValidityStateMethods for ValidityState {
                                 }
                             },
                             None => {
-                                println!("No RangeOverflow Error - No Value in html input element");
                                 return false;
                             }
                         }
@@ -566,7 +570,6 @@ impl ValidityStateMethods for ValidityState {
                                 }
                             },
                             None => {
-                                println!("No StepMismatch Error - No Value in html input element");
                                 return false;
                             }
                         }
@@ -627,29 +630,17 @@ impl ValidityStateMethods for ValidityState {
 
     // https://html.spec.whatwg.org/multipage/#dom-validitystate-customerror
     fn CustomError(&self) -> bool {
-        let element = match self.element.upcast::<Node>().type_id() {
-            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLInputElement)) => {
-            },
-            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLButtonElement)) => {
-            },
-            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLObjectElement)) => {
-            },
-            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLSelectElement)) => {
-            },
-            NodeTypeId::Element(ElementTypeId::HTMLElement(HTMLElementTypeId::HTMLTextAreaElement)) => {
-            },
-            NodeTypeId::Element(_)  => {
-            }
-            NodeTypeId::CharacterData(_)  => {
-            }
-            NodeTypeId::Document(_)  => {
-            }
-            NodeTypeId::DocumentFragment  => {
-            }
-            NodeTypeId::DocumentType  => {
-            }
-        };
-        false
+        let attr_value_check = self.element.get_attribute_by_name(DOMString::from("validationMessage"))
+                    .map(|s| s.Value());
+                match attr_value_check {
+                    Some(attr_value) => {
+                        return true;
+                    },
+                    None => {
+                        return false;
+                    }
+                }
+        false       
     }
 
     // https://html.spec.whatwg.org/multipage/#dom-validitystate-valid

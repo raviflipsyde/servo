@@ -787,8 +787,7 @@ impl VirtualMethods for HTMLInputElement {
                     }
                 }
         } else if event.type_() == atom!("invalid") && !event.DefaultPrevented() {
-                 document_from_node(self).request_focus(self.upcast());
-                println!("Handle Error in htmlinput element");
+            document_from_node(self).request_focus(self.upcast());
         }
     }
 }

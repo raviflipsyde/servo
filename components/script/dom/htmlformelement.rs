@@ -430,10 +430,8 @@ impl HTMLFormElement {
         }).collect::<Vec<FormSubmittableElement>>();
         // Step 4
         if invalid_controls.is_empty() {
-            println!("invalid_controls is_empty" );
             return Ok(()); }
         // Step 5-6
-        println!("invalid_controls is_NOT_empty" );
         let unhandled_invalid_controls = invalid_controls.into_iter().filter_map(|field| {
             let event = field.as_event_target()
                 .fire_event("invalid",
